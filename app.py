@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, make_response
+from flask import Flask, jsonify, render_template, make_response, send_from_directory, request
 from flask_cors import CORS
 from config import db
 from API.auth import auth_bp
@@ -7,17 +7,54 @@ import traceback
 import os
 
 app = Flask(__name__, 
-    static_folder='.',  # Mantém a configuração atual para arquivos estáticos
-    static_url_path='',
-    template_folder='templates'  # Especifica o diretório de templates
+    static_folder='static',  # Update static folder path
+    static_url_path='/static',  # Update static URL path
+    template_folder='templates'  # Keep template folder path
 )
 CORS(app)
+
+# Add logging for static files
+@app.before_request
+def log_request_info():
+    app.logger.debug('Headers: %s', request.headers)
+    app.logger.debug('Body: %s', request.get_data())
+    app.logger.debug('Path: %s', request.path)
+
+@app.after_request
+def after_request(response):
+    app.logger.debug('Response Status: %s', response.status)
+    app.logger.debug('Response Headers: %s', response.headers)
+    return response
+
+# Test route to check CSS content
+@app.route('/test-css')
+def test_css():
+    try:
+        css_path = os.path.join(app.static_folder, 'css', 'style.css')
+        if os.path.exists(css_path):
+            with open(css_path, 'r') as f:
+                content = f.read()
+            return f"""
+                <h1>CSS file exists!</h1>
+                <p>Path: {css_path}</p>
+                <p>Size: {len(content)} bytes</p>
+                <pre>{content[:500]}...</pre>
+            """
+        else:
+            return f"CSS file not found at {css_path}"
+    except Exception as e:
+        return f"Error reading CSS: {str(e)}"
 
 # Initialize email service
 mail = init_mail(app)
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
+
+# Debug route to serve CSS directly
+@app.route('/debug/css')
+def debug_css():
+    return send_from_directory('static/css', 'style.css')
 
 # Serve the main application
 @app.route('/')
