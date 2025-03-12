@@ -74,7 +74,10 @@ def send_email(to, subject, template, **kwargs):
             print(f"Argumentos do template: {kwargs}")
             raise
         
-        mail.send(msg)
+        # Use a context manager for the connection to ensure it's properly set up
+        with mail.connect() as conn:
+            conn.send(msg)
+        
         print(f"Email enviado com sucesso para {to}")
         return True
     except Exception as e:
