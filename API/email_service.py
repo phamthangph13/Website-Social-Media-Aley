@@ -74,11 +74,61 @@ def send_email(to, subject, template, **kwargs):
             print(f"Argumentos do template: {kwargs}")
             raise
         
-        # Use a context manager for the connection to ensure it's properly set up
-        with mail.connect() as conn:
-            conn.send(msg)
+        # Instead of using mail.connect() which is having issues, use a more direct approach
+        try:
+            # Get the SMTP settings from the app config
+            with current_app.app_context():
+                import smtplib
+                from email.mime.multipart import MIMEMultipart
+                from email.mime.text import MIMEText
+                
+                # Create a new SMTP connection
+                server = smtplib.SMTP(
+                    current_app.config['MAIL_SERVER'],
+                    current_app.config['MAIL_PORT']
+                )
+                
+                # Identify ourselves to the server
+                server.ehlo()
+                
+                # If using TLS, establish the secure connection
+                if current_app.config.get('MAIL_USE_TLS', False):
+                    server.starttls()
+                    server.ehlo()  # Re-identify after TLS
+                
+                # Login if credentials are provided
+                if current_app.config.get('MAIL_USERNAME') and current_app.config.get('MAIL_PASSWORD'):
+                    server.login(
+                        current_app.config['MAIL_USERNAME'], 
+                        current_app.config['MAIL_PASSWORD']
+                    )
+                
+                # Set up the message
+                email_message = MIMEMultipart('alternative')
+                email_message['Subject'] = subject
+                email_message['From'] = current_app.config.get('MAIL_DEFAULT_SENDER', current_app.config.get('MAIL_USERNAME', ''))
+                email_message['To'] = to
+                
+                # Attach the HTML part
+                email_message.attach(MIMEText(msg.html, 'html'))
+                
+                # Send the email
+                server.sendmail(
+                    current_app.config.get('MAIL_DEFAULT_SENDER', current_app.config.get('MAIL_USERNAME', '')),
+                    [to],
+                    email_message.as_string()
+                )
+                
+                # Properly close the connection
+                server.quit()
+                
+                print(f"Email enviado com sucesso para {to} usando conexão SMTP direta")
+        except Exception as smtp_error:
+            print(f"Erro com conexão SMTP direta: {str(smtp_error)}")
+            # Fall back to the standard Flask-Mail approach as a last resort
+            mail.send(msg)
+            print(f"Email enviado com método alternativo para {to}")
         
-        print(f"Email enviado com sucesso para {to}")
         return True
     except Exception as e:
         print(f"Erro ao enviar email para {to}: {str(e)}")
