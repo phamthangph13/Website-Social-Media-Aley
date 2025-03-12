@@ -187,29 +187,194 @@
     </div>
 
     <script>
+        // Funções de API para autenticação
+        const API_URL = 'http://127.0.0.1:5000/api/auth';
+
+        // Função para fazer login
+        async function loginUser(email, password) {
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                // Primeiro verificamos se a resposta está vazia
+                const text = await response.text();
+                
+                // Se a resposta estiver vazia, tratamos como erro
+                if (!text) {
+                    throw new Error('Resposta vazia do servidor');
+                }
+                
+                // Depois tentamos analisar como JSON
+                const data = JSON.parse(text);
+                
+                if (!response.ok) {
+                    // Verificar se é um erro de email não verificado
+                    if (response.status === 403 && data.message && data.message.includes('Email not verified')) {
+                        // Mostrar opção para reenviar email de verificação
+                        alert('Email não verificado! Enviamos um link de verificação para seu email quando você se registrou.');
+                        const resend = confirm('Deseja que enviemos um novo link de verificação?');
+                        
+                        if (resend) {
+                            await resendVerificationEmail(email);
+                        }
+                        return false;
+                    }
+                    throw new Error(data.message || 'Erro ao fazer login');
+                }
+                
+                // Salvar token no localStorage
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userData', JSON.stringify(data.user));
+                
+                return true;
+            } catch (error) {
+                console.error('Erro de login:', error);
+                alert(error.message || 'Erro ao processar o login. Tente novamente mais tarde.');
+                return false;
+            }
+        }
+
+        // Função para registrar usuário
+        async function registerUser(fullname, email, password, confirmPassword) {
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        fullname, 
+                        email, 
+                        password, 
+                        confirm_password: confirmPassword 
+                    })
+                });
+                
+                // Primeiro verificamos se a resposta está vazia
+                const text = await response.text();
+                
+                // Se a resposta estiver vazia, tratamos como erro
+                if (!text) {
+                    throw new Error('Resposta vazia do servidor');
+                }
+                
+                // Depois tentamos analisar como JSON
+                const data = JSON.parse(text);
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erro ao registrar');
+                }
+                
+                alert('Registro concluído com sucesso! Verifique seu email para ativar sua conta.');
+                return true;
+            } catch (error) {
+                console.error('Erro de registro:', error);
+                alert(error.message || 'Erro ao processar o registro. Tente novamente mais tarde.');
+                return false;
+            }
+        }
+
+        // Função para solicitar redefinição de senha
+        async function forgotPassword(email) {
+            try {
+                const response = await fetch(`${API_URL}/forgot-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                // Primeiro verificamos se a resposta está vazia
+                const text = await response.text();
+                
+                // Se a resposta estiver vazia, tratamos como erro
+                if (!text) {
+                    throw new Error('Resposta vazia do servidor');
+                }
+                
+                // Depois tentamos analisar como JSON
+                const data = JSON.parse(text);
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erro ao processar solicitação');
+                }
+                
+                alert('Se o email existir em nossa base de dados, enviaremos um link para redefinição de senha.');
+                return true;
+            } catch (error) {
+                console.error('Erro na recuperação de senha:', error);
+                alert(error.message || 'Erro ao processar a solicitação. Tente novamente mais tarde.');
+                return false;
+            }
+        }
+
+        // Função para reenviar email de verificação
+        async function resendVerificationEmail(email) {
+            try {
+                const response = await fetch(`${API_URL}/resend-verification`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                // Primeiro verificamos se a resposta está vazia
+                const text = await response.text();
+                
+                // Se a resposta estiver vazia, tratamos como erro
+                if (!text) {
+                    throw new Error('Resposta vazia do servidor');
+                }
+                
+                // Depois tentamos analisar como JSON
+                const data = JSON.parse(text);
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erro ao reenviar email');
+                }
+                
+                alert('Se o email existir e não estiver verificado, um novo link de verificação foi enviado.');
+                return true;
+            } catch (error) {
+                console.error('Erro ao reenviar verificação:', error);
+                alert(error.message || 'Erro ao reenviar o email de verificação. Tente novamente mais tarde.');
+                return false;
+            }
+        }
+
         // Thêm hiệu ứng khi submit form
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const button = document.querySelector('.login-btn');
             const originalText = button.textContent;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             
             button.textContent = 'Đang đăng nhập...';
             button.disabled = true;
             
-            // Giả lập đăng nhập
-            setTimeout(() => {
+            const success = await loginUser(email, password);
+            
+            if (success) {
                 button.textContent = 'Đăng nhập thành công!';
                 button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
                 
                 // Chuyển hướng sau khi đăng nhập
                 setTimeout(() => {
-                    // Chuyển hướng đến trang chính (giả lập)
-                    alert('Đăng nhập thành công! Chào mừng bạn đến với Aley.');
-                    button.textContent = originalText;
-                    button.disabled = false;
-                    button.style.background = 'linear-gradient(45deg, var(--primary), var(--primary-hover))';
+                    window.location.href = '/home.html';
                 }, 1500);
-            }, 2000);
+            } else {
+                button.textContent = originalText;
+                button.disabled = false;
+                button.style.background = 'linear-gradient(45deg, var(--primary), var(--primary-hover))';
+            }
         });
 
         // Hiệu ứng cho các input
@@ -284,19 +449,110 @@
             });
             
             // Xử lý form quên mật khẩu
-            document.getElementById('forgot-password-form').addEventListener('submit', function(e) {
+            document.getElementById('forgot-password-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const email = document.getElementById('recovery-email').value;
-                alert(`Đã gửi email khôi phục mật khẩu đến: ${email}`);
+                const button = this.querySelector('button');
+                const originalText = button.textContent;
+                
+                button.textContent = 'Processando...';
+                button.disabled = true;
+                
+                const success = await forgotPassword(email);
+                
+                if (success) {
+                    setTimeout(() => {
+                        hideAllForms();
+                        loginFormContainer.classList.add('active');
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }, 1500);
+                } else {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }
             });
             
             // Xử lý form đăng ký
-            document.getElementById('register-form').addEventListener('submit', function(e) {
+            document.getElementById('register-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
-                alert('Đăng ký thành công! Vui lòng đăng nhập với tài khoản mới.');
-                hideAllForms();
-                loginFormContainer.classList.add('active');
+                const fullname = document.getElementById('fullname').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                const button = this.querySelector('button');
+                const originalText = button.textContent;
+                
+                button.textContent = 'Processando...';
+                button.disabled = true;
+                
+                const success = await registerUser(fullname, email, password, confirmPassword);
+                
+                if (success) {
+                    setTimeout(() => {
+                        hideAllForms();
+                        loginFormContainer.classList.add('active');
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }, 1500);
+                } else {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }
             });
+
+            // Verificar se o usuário já está logado
+            const token = localStorage.getItem('token');
+            
+            if (token) {
+                try {
+                    // Verificar se o token é válido fazendo uma chamada ao endpoint /api/auth/profile
+                    fetch('/api/auth/profile', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            // Se o status não for 200, o token é inválido
+                            throw new Error('Token inválido');
+                        }
+                        return response.text();
+                    })
+                    .then(text => {
+                        if (!text.trim()) {
+                            throw new Error('Resposta vazia');
+                        }
+                        
+                        try {
+                            // Tentar analisar o JSON
+                            JSON.parse(text);
+                            // Se chegou aqui, o token é válido
+                            window.location.href = '/home.html';
+                        } catch (e) {
+                            console.error('Resposta não é um JSON válido:', e);
+                            throw new Error('Resposta inválida');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao validar token:', error);
+                        // Remove token inválido e mostra o login
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('userData');
+                        loginFormContainer.classList.add('active');
+                    });
+                } catch (error) {
+                    console.error('Erro ao verificar token:', error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userData');
+                    loginFormContainer.classList.add('active');
+                }
+            } else {
+                // Se não houver token, mostrar o formulário de login
+                loginFormContainer.classList.add('active');
+            }
         });
     </script>
 </body>

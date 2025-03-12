@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falha na Verificação de Email | Aley</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --danger: #ef4444;
+            --secondary: #6c757d;
+            --dark: #333;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f7fe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .verification-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .error-icon {
+            font-size: 60px;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        p {
+            color: var(--secondary);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .login-btn {
+            background: linear-gradient(45deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <i class="fas fa-exclamation-circle error-icon"></i>
+        <h1>Falha na Verificação de Email</h1>
+        <p>Desculpe, não foi possível verificar seu email. O link que você clicou pode ter expirado ou já foi usado anteriormente.</p>
+        <p>Se você acabou de se registrar, tente fazer login e solicitar o reenvio do email de verificação.</p>
+        <a href="/" class="login-btn">Voltar para Login</a>
+    </div>
+</body>
+</html> 

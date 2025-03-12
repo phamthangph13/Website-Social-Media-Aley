@@ -1,0 +1,8 @@
+Flask==2.3.3
+Werkzeug==2.3.7
+Flask-Cors==4.0.0
+pymongo==4.5.0
+python-dotenv==1.0.0
+PyJWT==2.8.0
+bson==0.5.10
+Flask-Mail==0.9.1 
