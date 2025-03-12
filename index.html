@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aley - Mạng xã hội kết nối mọi người</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-page">
+        <!-- Left Content Section -->
+        <div class="content-section">
+            <div class="floating-shape shape1"></div>
+            <div class="floating-shape shape2"></div>
+            <div class="floating-shape shape3"></div>
+            
+            <div class="content-wrapper">
+                <div class="site-logo">
+                    <i class="fas fa-people-group logo-icon"></i>
+                    <div class="logo-text">Aley</div>
+                </div>
+                
+                <h1 class="tagline">Kết nối, Chia sẻ và Khám phá.</h1>
+                <p class="description">
+                    Tham gia cộng đồng Aley để kết nối với bạn bè, gia đình và thế giới xung quanh bạn. 
+                    Chia sẻ khoảnh khắc, theo dõi các sở thích và khám phá những người có chung đam mê.
+                </p>
+                
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="feature-text">Kết nối với bạn bè và mở rộng mạng lưới của bạn</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-photo-video"></i>
+                        </div>
+                        <div class="feature-text">Chia sẻ ảnh, video và những khoảnh khắc đáng nhớ</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="feature-text">Khám phá nội dung và cộng đồng phù hợp với bạn</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Form Section -->
+        <div class="form-section">
+            <div class="login-container">
+                <!-- Form đăng nhập -->
+                <div id="login-form-container" class="form-container active">
+                    <div class="login-header">
+                        <h1>Chào mừng trở lại!</h1>
+                        <p>Vui lòng đăng nhập để tiếp tục hành trình của bạn</p>
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email">Email hoặc tên đăng nhập</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="email" name="email" placeholder="Nhập email hoặc tên đăng nhập" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Mật khẩu</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                            </div>
+                        </div>
+
+                        <div class="forgot-password">
+                            <a href="#" id="forgot-password-link">Quên mật khẩu?</a>
+                        </div>
+
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Ghi nhớ đăng nhập</label>
+                        </div>
+
+                        <button type="submit" class="login-btn">Đăng nhập</button>
+                    </form>
+
+                    <div class="social-login">
+                        <p>Hoặc đăng nhập với</p>
+                        <div class="social-icons">
+                            <div class="social-icon facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div class="social-icon google">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div class="social-icon twitter">
+                                <i class="fab fa-twitter"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="register-link">
+                        <p>Chưa có tài khoản? <a href="#" id="register-link">Đăng ký ngay</a></p>
+                    </div>
+                </div>
+
+                <!-- Form đăng ký -->
+                <div id="register-form-container" class="form-container">
+                    <div class="login-header">
+                        <h1>Tạo tài khoản mới</h1>
+                        <p>Tham gia cộng đồng Aley ngay hôm nay</p>
+                    </div>
+                    
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="fullname">Họ và tên</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="fullname" name="fullname" placeholder="Nhập họ và tên" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="register-email" name="email" placeholder="Nhập email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="register-password">Mật khẩu</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="register-password" name="password" placeholder="Nhập mật khẩu" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Xác nhận mật khẩu</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="confirm-password" name="confirm-password" placeholder="Nhập lại mật khẩu" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="login-btn">Đăng ký</button>
+                    </form>
+
+                    <div class="register-link">
+                        <p>Đã có tài khoản? <a href="#" id="login-link">Đăng nhập</a></p>
+                    </div>
+                </div>
+
+                <!-- Form quên mật khẩu -->
+                <div id="forgot-password-container" class="form-container">
+                    <div class="login-header">
+                        <h1>Khôi phục mật khẩu</h1>
+                        <p>Nhập email của bạn để nhận liên kết đặt lại mật khẩu</p>
+                    </div>
+                    
+                    <form id="forgot-password-form">
+                        <div class="form-group">
+                            <label for="recovery-email">Email</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="recovery-email" name="email" placeholder="Nhập email đã đăng ký" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="login-btn">Gửi liên kết khôi phục</button>
+                    </form>
+
+                    <div class="register-link">
+                        <p>Nhớ mật khẩu? <a href="#" id="back-to-login">Quay lại đăng nhập</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Thêm hiệu ứng khi submit form
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = document.querySelector('.login-btn');
+            const originalText = button.textContent;
+            
+            button.textContent = 'Đang đăng nhập...';
+            button.disabled = true;
+            
+            // Giả lập đăng nhập
+            setTimeout(() => {
+                button.textContent = 'Đăng nhập thành công!';
+                button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+                
+                // Chuyển hướng sau khi đăng nhập
+                setTimeout(() => {
+                    // Chuyển hướng đến trang chính (giả lập)
+                    alert('Đăng nhập thành công! Chào mừng bạn đến với Aley.');
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    button.style.background = 'linear-gradient(45deg, var(--primary), var(--primary-hover))';
+                }, 1500);
+            }, 2000);
+        });
+
+        // Hiệu ứng cho các input
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'transform 0.3s';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Hiệu ứng cho social icons
+        const socialIcons = document.querySelectorAll('.social-icon');
+        socialIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) rotate(5deg)';
+            });
+            
+            icon.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) rotate(0)';
+            });
+        });
+
+        // Xử lý chuyển đổi giữa các form
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginFormContainer = document.getElementById('login-form-container');
+            const registerFormContainer = document.getElementById('register-form-container');
+            const forgotPasswordContainer = document.getElementById('forgot-password-container');
+            
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const registerLink = document.getElementById('register-link');
+            const loginLink = document.getElementById('login-link');
+            const backToLoginLink = document.getElementById('back-to-login');
+            
+            // Hàm ẩn tất cả các form
+            function hideAllForms() {
+                loginFormContainer.classList.remove('active');
+                registerFormContainer.classList.remove('active');
+                forgotPasswordContainer.classList.remove('active');
+            }
+            
+            // Đăng ký ngay
+            registerLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                hideAllForms();
+                registerFormContainer.classList.add('active');
+            });
+            
+            // Quên mật khẩu
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                hideAllForms();
+                forgotPasswordContainer.classList.add('active');
+            });
+            
+            // Quay lại đăng nhập
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                hideAllForms();
+                loginFormContainer.classList.add('active');
+            });
+            
+            // Quay lại đăng nhập từ quên mật khẩu
+            backToLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                hideAllForms();
+                loginFormContainer.classList.add('active');
+            });
+            
+            // Xử lý form quên mật khẩu
+            document.getElementById('forgot-password-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('recovery-email').value;
+                alert(`Đã gửi email khôi phục mật khẩu đến: ${email}`);
+            });
+            
+            // Xử lý form đăng ký
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Đăng ký thành công! Vui lòng đăng nhập với tài khoản mới.');
+                hideAllForms();
+                loginFormContainer.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html> 

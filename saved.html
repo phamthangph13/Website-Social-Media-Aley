@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aley - Đã lưu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="saved.css">
+</head>
+<body>
+    <div class="home-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-people-group logo-icon"></i>
+                <div class="logo-text">Aley</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="home.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="explore.html" class="menu-item">
+                    <i class="fas fa-compass"></i>
+                    <span>Khám phá</span>
+                </a>
+                <a href="notifications.html" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Thông báo</span>
+                </a>
+                <a href="messages.html" class="menu-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>Tin nhắn</span>
+                </a>
+                <a href="saved.html" class="menu-item active">
+                    <i class="fas fa-bookmark"></i>
+                    <span>Đã lưu</span>
+                </a>
+                <a href="list.html" class="menu-item">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Danh sách</span>
+                </a>
+                <a href="profile.html" class="menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Trang cá nhân</span>
+                </a>
+                <a href="statistics.html" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Thống kê</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">Nguyễn Văn A</div>
+                        <div class="user-status">Trực tuyến</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Toggle -->
+        <div class="mobile-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header with Search and Actions -->
+            <div class="content-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm trong mục đã lưu...">
+                </div>
+                
+                <div class="header-actions">
+                    <div class="action-btn">
+                        <i class="fas fa-envelope"></i>
+                        <div class="notification-badge">3</div>
+                    </div>
+                    <div class="action-btn">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge">5</div>
+                    </div>
+                    <div class="action-btn">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Saved Content Container -->
+            <div class="saved-container">
+                <div class="saved-header">
+                    <h1 class="saved-title">Nội dung đã lưu</h1>
+                    <div class="saved-actions">
+                        <div class="saved-action">
+                            <i class="fas fa-folder-plus"></i>
+                            <span>Tạo bộ sưu tập</span>
+                        </div>
+                        <div class="view-toggle">
+                            <div class="view-option active" data-view="grid">
+                                <i class="fas fa-th-large"></i>
+                            </div>
+                            <div class="view-option" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Saved Content Filters -->
+                <div class="saved-filters">
+                    <div class="filter-options">
+                        <div class="filter-btn active">Tất cả</div>
+                        <div class="filter-btn">Bài viết</div>
+                        <div class="filter-btn">Hình ảnh</div>
+                        <div class="filter-btn">Video</div>
+                        <div class="filter-btn">Liên kết</div>
+                    </div>
+                    <div class="sort-options">
+                        <div class="sort-label">Sắp xếp:</div>
+                        <select class="sort-select">
+                            <option value="newest">Mới nhất</option>
+                            <option value="oldest">Cũ nhất</option>
+                            <option value="popular">Phổ biến nhất</option>
+                            <option value="az">A-Z</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Collections Section -->
+                <div class="collections-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Bộ sưu tập của bạn</h2>
+                        <div class="section-link">Xem tất cả</div>
+                    </div>
+                    
+                    <div class="collections-list">
+                        <div class="collection-item">
+                            <div class="collection-cover">
+                                <div class="collection-thumbnail main">
+                                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                                <div class="collection-thumbnail">
+                                    <img src="https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                                <div class="collection-thumbnail">
+                                    <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                            </div>
+                            <div class="collection-info">
+                                <div class="collection-name">Du lịch và phong cảnh</div>
+                                <div class="collection-count">15 mục</div>
+                            </div>
+                        </div>
+                        
+                        <div class="collection-item">
+                            <div class="collection-cover">
+                                <div class="collection-thumbnail main">
+                                    <img src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                                <div class="collection-thumbnail">
+                                    <img src="https://images.unsplash.com/photo-1532980400857-e8d9d275d858?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                                <div class="collection-thumbnail">
+                                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                            </div>
+                            <div class="collection-info">
+                                <div class="collection-name">Ẩm thực</div>
+                                <div class="collection-count">8 mục</div>
+                            </div>
+                        </div>
+                        
+                        <div class="collection-item">
+                            <div class="collection-cover">
+                                <div class="collection-thumbnail main">
+                                    <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                                <div class="collection-thumbnail">
+                                    <img src="https://images.unsplash.com/photo-1469571486292-b53926c9bf6c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                                <div class="collection-thumbnail">
+                                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Collection image">
+                                </div>
+                            </div>
+                            <div class="collection-info">
+                                <div class="collection-name">Ý tưởng sự kiện</div>
+                                <div class="collection-count">12 mục</div>
+                            </div>
+                        </div>
+                        
+                        <div class="collection-item new">
+                            <div class="new-collection">
+                                <i class="fas fa-plus"></i>
+                                <div>Tạo bộ sưu tập mới</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- All Saved Items -->
+                <div class="saved-items-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Tất cả mục đã lưu</h2>
+                        <div class="items-count">45 mục</div>
+                    </div>
+                    
+                    <div class="saved-items grid-view">
+                        <!-- Post Item -->
+                        <div class="saved-item" data-type="post">
+                            <div class="item-header">
+                                <div class="item-user">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">Trần Thị B</div>
+                                        <div class="post-time">2 ngày trước</div>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <div class="dropdown-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-folder"></i> Thêm vào bộ sưu tập
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-share-alt"></i> Chia sẻ
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-bookmark text-danger"></i> Bỏ lưu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-text">
+                                    Chuyến du lịch Đà Lạt cuối tuần vừa qua thật tuyệt! Không khí trong lành, phong cảnh tuyệt đẹp. Đặc biệt là các quán cà phê view đồi núi rất đáng để thử.
+                                </div>
+                                <div class="item-media">
+                                    <img src="https://images.unsplash.com/photo-1531750037802-64d78069d3dd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="Post image">
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart"></i> 245
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment"></i> 32
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-bookmark"></i> 18
+                                    </div>
+                                </div>
+                                <div class="save-date">Đã lưu vào 12/05/2023</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Image Item -->
+                        <div class="saved-item" data-type="image">
+                            <div class="item-header">
+                                <div class="item-user">
+                                    <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">Lê Văn C</div>
+                                        <div class="post-time">1 tuần trước</div>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <div class="dropdown-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-folder"></i> Thêm vào bộ sưu tập
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-share-alt"></i> Chia sẻ
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-bookmark text-danger"></i> Bỏ lưu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content image-only">
+                                <div class="item-media full">
+                                    <img src="https://images.unsplash.com/photo-1517960413843-0aee8e2b3285?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Image">
+                                    <div class="media-overlay">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart"></i> 189
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment"></i> 14
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-bookmark"></i> 26
+                                    </div>
+                                </div>
+                                <div class="save-date">Đã lưu vào 05/05/2023</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Item -->
+                        <div class="saved-item" data-type="video">
+                            <div class="item-header">
+                                <div class="item-user">
+                                    <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="User avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">Phạm Thị D</div>
+                                        <div class="post-time">2 tuần trước</div>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <div class="dropdown-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-folder"></i> Thêm vào bộ sưu tập
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-share-alt"></i> Chia sẻ
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-bookmark text-danger"></i> Bỏ lưu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-text">
+                                    Bài hướng dẫn làm bánh tiramisu siêu đơn giản tại nhà. Ai cũng có thể làm được!
+                                </div>
+                                <div class="item-media video">
+                                    <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Video thumbnail">
+                                    <div class="video-overlay">
+                                        <i class="fas fa-play-circle"></i>
+                                        <div class="video-duration">5:42</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart"></i> 312
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment"></i> 47
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-bookmark"></i> 54
+                                    </div>
+                                </div>
+                                <div class="save-date">Đã lưu vào 28/04/2023</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Link Item -->
+                        <div class="saved-item" data-type="link">
+                            <div class="item-header">
+                                <div class="item-user">
+                                    <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="User avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">Hoàng Văn G</div>
+                                        <div class="post-time">3 tuần trước</div>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <div class="dropdown-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-folder"></i> Thêm vào bộ sưu tập
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-share-alt"></i> Chia sẻ
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-bookmark text-danger"></i> Bỏ lưu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-text">
+                                    10 xu hướng thiết kế web mới nhất năm 2023 mà mọi designer nên biết
+                                </div>
+                                <div class="link-preview">
+                                    <div class="link-image">
+                                        <img src="https://images.unsplash.com/photo-1458862768540-8b091824fe2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Link preview">
+                                    </div>
+                                    <div class="link-info">
+                                        <div class="link-domain">designtrends.com</div>
+                                        <div class="link-title">10 xu hướng thiết kế web đột phá năm 2023</div>
+                                        <div class="link-description">Tổng hợp những xu hướng thiết kế web mới nhất đang thống trị...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart"></i> 156
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment"></i> 23
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-bookmark"></i> 41
+                                    </div>
+                                </div>
+                                <div class="save-date">Đã lưu vào 15/04/2023</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Another Post Item -->
+                        <div class="saved-item" data-type="post">
+                            <div class="item-header">
+                                <div class="item-user">
+                                    <img src="https://randomuser.me/api/portraits/women/56.jpg" alt="User avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">Trần Thị H</div>
+                                        <div class="post-time">1 tháng trước</div>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <div class="dropdown-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-folder"></i> Thêm vào bộ sưu tập
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-share-alt"></i> Chia sẻ
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-bookmark text-danger"></i> Bỏ lưu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-text">
+                                    5 bài tập yoga đơn giản cho người mới bắt đầu. Chỉ cần 15 phút mỗi ngày, bạn sẽ thấy sự khác biệt rõ rệt sau 2 tuần!
+                                </div>
+                                <div class="item-media multi">
+                                    <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Post image">
+                                    <div class="multi-indicator">+4</div>
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart"></i> 278
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment"></i> 39
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-bookmark"></i> 62
+                                    </div>
+                                </div>
+                                <div class="save-date">Đã lưu vào 02/04/2023</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Another Image Item -->
+                        <div class="saved-item" data-type="image">
+                            <div class="item-header">
+                                <div class="item-user">
+                                    <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="User avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">Hà Văn K</div>
+                                        <div class="post-time">1 tháng trước</div>
+                                    </div>
+                                </div>
+                                <div class="item-actions">
+                                    <div class="dropdown-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-folder"></i> Thêm vào bộ sưu tập
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-share-alt"></i> Chia sẻ
+                                            </div>
+                                            <div class="dropdown-item">
+                                                <i class="fas fa-bookmark text-danger"></i> Bỏ lưu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-content image-only">
+                                <div class="item-media full">
+                                    <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Image">
+                                    <div class="media-overlay">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart"></i> 210
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment"></i> 18
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-bookmark"></i> 32
+                                    </div>
+                                </div>
+                                <div class="save-date">Đã lưu vào 29/03/2023</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Load More Button -->
+                    <div class="load-more">
+                        <button class="load-more-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            Xem thêm
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Empty State (initially hidden) -->
+                <div class="empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="empty-title">Chưa có mục nào được lưu</div>
+                    <div class="empty-text">Khi bạn lưu bài viết, hình ảnh, video hoặc liên kết, chúng sẽ xuất hiện ở đây.</div>
+                    <div class="empty-action">
+                        <a href="explore.html" class="empty-btn">
+                            <i class="fas fa-compass"></i>
+                            Khám phá nội dung
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle pulse-animation">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <script>
+        // Mobile sidebar toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Menu item active state
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // View toggle
+        const viewOptions = document.querySelectorAll('.view-option');
+        const savedItems = document.querySelector('.saved-items');
+        
+        viewOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                viewOptions.forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                
+                const viewType = this.getAttribute('data-view');
+                if (viewType === 'grid') {
+                    savedItems.classList.add('grid-view');
+                    savedItems.classList.remove('list-view');
+                } else {
+                    savedItems.classList.add('list-view');
+                    savedItems.classList.remove('grid-view');
+                }
+            });
+        });
+        
+        // Filter buttons
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const savedItemsElements = document.querySelectorAll('.saved-item');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterType = this.textContent.toLowerCase();
+                
+                if (filterType === 'tất cả') {
+                    savedItemsElements.forEach(item => {
+                        item.style.display = 'block';
+                    });
+                } else {
+                    savedItemsElements.forEach(item => {
+                        const itemType = item.getAttribute('data-type');
+                        if (filterType === 'bài viết' && itemType === 'post' ||
+                            filterType === 'hình ảnh' && itemType === 'image' || 
+                            filterType === 'video' && itemType === 'video' ||
+                            filterType === 'liên kết' && itemType === 'link') {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Check if there are any visible items
+                const visibleItems = Array.from(savedItemsElements).filter(item => item.style.display !== 'none');
+                
+                if (visibleItems.length === 0) {
+                    document.querySelector('.saved-items-section').style.display = 'none';
+                    document.querySelector('.empty-state').style.display = 'flex';
+                } else {
+                    document.querySelector('.saved-items-section').style.display = 'block';
+                    document.querySelector('.empty-state').style.display = 'none';
+                }
+            });
+        });
+        
+        // Dropdown menu toggle
+        document.addEventListener('click', function(e) {
+            const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+            
+            dropdownMenus.forEach(menu => {
+                if (menu.contains(e.target)) {
+                    menu.classList.toggle('active');
+                } else {
+                    menu.classList.remove('active');
+                }
+            });
+        });
+        
+        // Load more functionality
+        document.querySelector('.load-more-btn').addEventListener('click', function() {
+            // In a real app, you would fetch more saved items here
+            // For demo, we'll just show a loading state
+            const button = this;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
+            
+            setTimeout(() => {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> Xem thêm';
+                alert('Đã tải tất cả mục đã lưu.');
+            }, 1500);
+        });
+        
+        // Dark mode toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-moon')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+            
+            // Save preference
+            const isDarkMode = document.body.classList.contains('dark-theme');
+            localStorage.setItem('darkMode', isDarkMode);
+        });
+        
+        // Check saved preference
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'true') {
+            document.body.classList.add('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+    </script>
+</body>
+</html> 

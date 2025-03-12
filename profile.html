@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aley - Trang cá nhân</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <div class="home-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-people-group logo-icon"></i>
+                <div class="logo-text">Aley</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="home.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="explore.html" class="menu-item">
+                    <i class="fas fa-compass"></i>
+                    <span>Khám phá</span>
+                </a>
+                <a href="notifications.html" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Thông báo</span>
+                </a>
+                <a href="messages.html" class="menu-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>Tin nhắn</span>
+                </a>
+                <a href="saved.html" class="menu-item">
+                    <i class="fas fa-bookmark"></i>
+                    <span>Đã lưu</span>
+                </a>
+                <a href="list.html" class="menu-item">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Danh sách</span>
+                </a>
+                <a href="profile.html" class="menu-item active">
+                    <i class="fas fa-user"></i>
+                    <span>Trang cá nhân</span>
+                </a>
+                <a href="statistics.html" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Thống kê</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">Nguyễn Văn A</div>
+                        <div class="user-status">Trực tuyến</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Toggle -->
+        <div class="mobile-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header with Search and Actions -->
+            <div class="content-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm trên Aley...">
+                </div>
+                
+                <div class="header-actions">
+                    <div class="action-btn">
+                        <i class="fas fa-envelope"></i>
+                        <div class="notification-badge">3</div>
+                    </div>
+                    <div class="action-btn">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge">5</div>
+                    </div>
+                    <div class="action-btn">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="profile-container">
+                <!-- Profile Header with Cover Photo -->
+                <div class="profile-header">
+                    <div class="cover-photo">
+                        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80" alt="Cover photo">
+                        <div class="cover-edit-btn">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-info-wrapper">
+                        <div class="profile-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile picture">
+                            <div class="avatar-edit-btn">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button class="edit-profile-btn">
+                                <i class="fas fa-edit"></i>
+                                <span>Chỉnh sửa trang cá nhân</span>
+                            </button>
+                            <div class="more-actions">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profile Info -->
+                <div class="profile-info">
+                    <div class="profile-name-wrapper">
+                        <div class="profile-name">Nguyễn Văn A</div>
+                        <div class="profile-verified">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="profile-username">@nguyenvana</div>
+                    <div class="profile-bio">
+                        Nhiếp ảnh gia | Du lịch khắp Việt Nam 🇻🇳 | Yêu thích âm nhạc và ẩm thực
+                    </div>
+                    
+                    <div class="profile-metadata">
+                        <div class="meta-item">
+                            <i class="fas fa-briefcase"></i>
+                            <span>Nhiếp ảnh gia tại <strong>Studio Ánh Sáng</strong></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Học tại <strong>Đại học Nghệ thuật Hà Nội</strong></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Sống tại <strong>Hà Nội, Việt Nam</strong></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-link"></i>
+                            <a href="#">www.nguyenvana.com</a>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Tham gia vào Tháng 6, 2020</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">243</div>
+                            <div class="stat-label">Bài viết</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">15.2K</div>
+                            <div class="stat-label">Người theo dõi</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1,021</div>
+                            <div class="stat-label">Đang theo dõi</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profile Tabs -->
+                <div class="profile-tabs">
+                    <div class="tab-item active">
+                        <i class="fas fa-th"></i>
+                        <span>Bài viết</span>
+                    </div>
+                    <div class="tab-item">
+                        <i class="fas fa-images"></i>
+                        <span>Ảnh</span>
+                    </div>
+                    <div class="tab-item">
+                        <i class="fas fa-film"></i>
+                        <span>Video</span>
+                    </div>
+                    <div class="tab-item">
+                        <i class="fas fa-heart"></i>
+                        <span>Đã thích</span>
+                    </div>
+                    <div class="tab-item">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Đã lưu</span>
+                    </div>
+                </div>
+                
+                <!-- Profile Feed -->
+                <div class="profile-feed">
+                    <!-- Post Item -->
+                    <div class="post-item">
+                        <div class="post-header">
+                            <div class="post-author">
+                                <div class="author-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author avatar">
+                                </div>
+                                <div class="author-info">
+                                    <div class="author-name">Nguyễn Văn A</div>
+                                    <div class="post-time">2 giờ trước · <i class="fas fa-globe-asia"></i></div>
+                                </div>
+                            </div>
+                            <div class="post-actions">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content">
+                            <div class="post-text">
+                                Chuyến du lịch Đà Lạt cuối tuần vừa qua thật tuyệt! Không khí mát mẻ, phong cảnh tuyệt đẹp và ẩm thực đặc sắc. Hãy cho mình biết ai đã từng đến Đà Lạt và yêu thích những gì ở thành phố này nhé?
+                                <div class="hashtags">
+                                    <a href="#">#DaLat</a>
+                                    <a href="#">#DuLich</a>
+                                    <a href="#">#VietNam</a>
+                                </div>
+                            </div>
+                            <div class="post-images">
+                                <div class="image-grid">
+                                    <img src="https://images.unsplash.com/photo-1531750037802-64d78069d3dd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Post image">
+                                    <img src="https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Post image">
+                                    <img src="https://images.unsplash.com/photo-1561000933-f826a5eb279d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Post image">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="post-stats">
+                            <div class="stat-group">
+                                <div class="reaction-icons">
+                                    <i class="fas fa-heart"></i>
+                                    <i class="fas fa-thumbs-up"></i>
+                                </div>
+                                <span>256 người thích</span>
+                            </div>
+                            <div class="stat-group">
+                                <span>42 bình luận</span>
+                                <span>18 chia sẻ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="post-actions-buttons">
+                            <div class="action-button">
+                                <i class="far fa-heart"></i>
+                                <span>Thích</span>
+                            </div>
+                            <div class="action-button">
+                                <i class="far fa-comment"></i>
+                                <span>Bình luận</span>
+                            </div>
+                            <div class="action-button">
+                                <i class="far fa-share-square"></i>
+                                <span>Chia sẻ</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Post Item -->
+                    <div class="post-item">
+                        <div class="post-header">
+                            <div class="post-author">
+                                <div class="author-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author avatar">
+                                </div>
+                                <div class="author-info">
+                                    <div class="author-name">Nguyễn Văn A</div>
+                                    <div class="post-time">2 ngày trước · <i class="fas fa-globe-asia"></i></div>
+                                </div>
+                            </div>
+                            <div class="post-actions">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content">
+                            <div class="post-text">
+                                Vừa thử quán cà phê mới ở phố cổ, không gian rất xinh và đồ uống cực hợp gu. Nếu bạn đang tìm nơi làm việc yên tĩnh thì đây là lựa chọn tuyệt vời!
+                            </div>
+                            <div class="post-images">
+                                <div class="image-grid single">
+                                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="Post image">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="post-stats">
+                            <div class="stat-group">
+                                <div class="reaction-icons">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <span>124 người thích</span>
+                            </div>
+                            <div class="stat-group">
+                                <span>15 bình luận</span>
+                                <span>5 chia sẻ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="post-actions-buttons">
+                            <div class="action-button">
+                                <i class="far fa-heart"></i>
+                                <span>Thích</span>
+                            </div>
+                            <div class="action-button">
+                                <i class="far fa-comment"></i>
+                                <span>Bình luận</span>
+                            </div>
+                            <div class="action-button">
+                                <i class="far fa-share-square"></i>
+                                <span>Chia sẻ</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Load More -->
+                    <div class="load-more-container">
+                        <button class="load-more-btn">
+                            <i class="fas fa-spinner"></i>
+                            <span>Xem thêm bài viết</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle pulse-animation">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <script>
+        // Mobile sidebar toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Menu item active state
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Profile tabs
+        const tabItems = document.querySelectorAll('.tab-item');
+        tabItems.forEach(item => {
+            item.addEventListener('click', function() {
+                tabItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Here you would normally load different content based on tab
+                // For demonstration, we're just showing all posts
+            });
+        });
+        
+        // Dark mode toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-moon')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+            
+            // Save preference
+            const isDarkMode = document.body.classList.contains('dark-theme');
+            localStorage.setItem('darkMode', isDarkMode);
+        });
+        
+        // Check saved preference
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'true') {
+            document.body.classList.add('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+    </script>
+</body>
+</html> 
