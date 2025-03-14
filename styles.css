@@ -231,10 +231,48 @@ body {
     font-size: 1rem;
 }
 
+/* Form group styles */
 .form-group {
     margin-bottom: 1.5rem;
 }
 
+/* Birthday inputs styles */
+.birthday-inputs {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.birthday-inputs input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #2d3748;
+    padding: 0;
+    width: 100%;
+}
+
+.birthday-inputs input::-webkit-outer-spin-button,
+.birthday-inputs input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.birthday-inputs input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.birthday-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+/* Input group styles */
 .input-group {
     position: relative;
     border: 1px solid #e2e8f0;

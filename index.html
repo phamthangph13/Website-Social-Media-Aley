@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Add Toastify for notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
     <div class="container">
@@ -117,6 +120,17 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <div class="birthday-inputs">
+                                        <input type="number" id="register-birthday-day" name="register-birthday-day" placeholder="Ngày" min="1" max="31" required>
+                                        <input type="number" id="register-birthday-month" name="register-birthday-month" placeholder="Tháng" min="1" max="12" required>
+                                        <input type="number" id="register-birthday-year" name="register-birthday-year" placeholder="Năm" min="1900" max="2023" required>
+                                    </div>
+                                </div>
+                    
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
                                     <i class="fas fa-lock"></i>
                                     <input type="password" id="register-password" name="register-password" placeholder="Mật khẩu" required>
                                 </div>
@@ -166,10 +180,45 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Form đặt lại mật khẩu -->
+                <div class="form-wrapper" id="reset-wrapper">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <h2>Đặt lại mật khẩu</h2>
+                            <p>Vui lòng nhập mật khẩu mới cho tài khoản của bạn.</p>
+                        </div>
+                        <form id="reset-form">
+                            <input type="hidden" id="reset-token" name="reset-token">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="reset-password" name="reset-password" placeholder="Mật khẩu mới" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="reset-confirm-password" name="reset-confirm-password" placeholder="Xác nhận mật khẩu mới" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <span>Đặt lại mật khẩu</span>
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </form>
+                        <div class="form-footer">
+                            <p>Nhớ mật khẩu? <a href="#" class="login-link">Đăng nhập</a></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Import API Service -->
+    <script src="Scripts/api-service.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Hiển thị form đăng nhập ban đầu
@@ -231,6 +280,163 @@
                     }
                 });
             });
+            
+            // Hàm hiển thị thông báo
+            function showNotification(message, isSuccess = true) {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: isSuccess ? "#4CAF50" : "#F44336",
+                    stopOnFocus: true
+                }).showToast();
+            }
+            
+            // Kiểm tra nếu đã đăng nhập, chuyển hướng đến trang chính
+            if (AleyAPI.Auth.isLoggedIn()) {
+                window.location.href = '/Page/home.html';
+            }
+            
+            // Xử lý đăng nhập
+            document.getElementById('login-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                try {
+                    const response = await AleyAPI.Auth.login(email, password);
+                    showNotification('Đăng nhập thành công!', true);
+                    
+                    // Chuyển hướng đến trang chính sau khi đăng nhập thành công
+                    setTimeout(() => {
+                        window.location.href = '/Page/home.html';
+                    }, 1000);
+                } catch (error) {
+                    showNotification(error.message, false);
+                }
+            });
+            
+            // Xử lý đăng ký
+            document.getElementById('register-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('register-fullname').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                
+                // Kiểm tra xác nhận mật khẩu
+                if (password !== confirmPassword) {
+                    showNotification('Mật khẩu xác nhận không khớp', false);
+                    return;
+                }
+                
+                // Lấy ngày sinh
+                const day = document.getElementById('register-birthday-day').value;
+                const month = document.getElementById('register-birthday-month').value;
+                const year = document.getElementById('register-birthday-year').value;
+                const dateOfBirth = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                try {
+                    const userData = {
+                        fullName,
+                        email,
+                        password,
+                        dateOfBirth
+                    };
+                    
+                    const response = await AleyAPI.Auth.register(userData);
+                    showNotification(response.message, true);
+                    
+                    // Chuyển về trang đăng nhập sau khi đăng ký thành công
+                    setTimeout(() => {
+                        showForm('login-wrapper');
+                    }, 2000);
+                } catch (error) {
+                    showNotification(error.message, false);
+                }
+            });
+            
+            // Xử lý quên mật khẩu
+            document.getElementById('forgot-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('forgot-email').value;
+                
+                try {
+                    const response = await AleyAPI.Auth.forgotPassword(email);
+                    showNotification(response.message, true);
+                    
+                    // Chuyển về trang đăng nhập sau khi yêu cầu đặt lại mật khẩu thành công
+                    setTimeout(() => {
+                        showForm('login-wrapper');
+                    }, 2000);
+                } catch (error) {
+                    showNotification(error.message, false);
+                }
+            });
+
+            // Xử lý đặt lại mật khẩu
+            document.getElementById('reset-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const token = document.getElementById('reset-token').value;
+                const password = document.getElementById('reset-password').value;
+                const confirmPassword = document.getElementById('reset-confirm-password').value;
+                
+                // Kiểm tra xác nhận mật khẩu
+                if (password !== confirmPassword) {
+                    showNotification('Mật khẩu xác nhận không khớp', false);
+                    return;
+                }
+                
+                try {
+                    const response = await AleyAPI.Auth.resetPassword(token, password);
+                    showNotification(response.message, true);
+                    
+                    // Chuyển về trang đăng nhập sau khi đặt lại mật khẩu thành công
+                    setTimeout(() => {
+                        showForm('login-wrapper');
+                    }, 2000);
+                } catch (error) {
+                    showNotification(error.message, false);
+                }
+            });
+            
+            // Kiểm tra các tham số URL
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Kiểm tra xem có token reset mật khẩu trong URL không
+            const resetToken = urlParams.get('reset_token');
+            if (resetToken) {
+                // Hiển thị form đặt lại mật khẩu và điền token
+                document.getElementById('reset-token').value = resetToken;
+                showForm('reset-wrapper');
+            }
+            
+            // Kiểm tra xem có thông báo xác thực email trong URL không
+            const verifyStatus = urlParams.get('verify_status');
+            if (verifyStatus) {
+                if (verifyStatus === 'success') {
+                    showNotification('Xác thực email thành công! Bạn có thể đăng nhập ngay bây giờ.', true);
+                } else {
+                    const errorMessage = urlParams.get('error') || 'Xác thực email thất bại!';
+                    showNotification(errorMessage, false);
+                }
+            }
+            
+            // Kiểm tra kết quả đặt lại mật khẩu
+            const resetStatus = urlParams.get('reset_status');
+            if (resetStatus) {
+                if (resetStatus === 'success') {
+                    showNotification('Đặt lại mật khẩu thành công! Bạn có thể đăng nhập bằng mật khẩu mới.', true);
+                } else {
+                    const errorMessage = urlParams.get('error') || 'Đặt lại mật khẩu thất bại!';
+                    showNotification(errorMessage, false);
+                }
+            }
         });
     </script>
 </body>
