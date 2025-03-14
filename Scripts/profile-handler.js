@@ -72,18 +72,11 @@ function updateProfileUI(userData) {
         name.textContent = userData.fullName || 'Người dùng Aley';
     });
     
-    // Format and display date of birth if available
-    if (userData.dateOfBirth) {
-        // You could add a bio element with the date of birth or other user info
-        const bioElement = document.querySelector('.profile-bio');
-        if (bioElement) {
-            // Format date of birth (example: convert from ISO format to DD/MM/YYYY)
-            const dob = new Date(userData.dateOfBirth);
-            const formattedDob = `${dob.getDate()}/${dob.getMonth() + 1}/${dob.getFullYear()}`;
-            
-            // You could customize this to show other information or format differently
-            
-        }
+    // Update bio element (no date of birth as requested)
+    const bioElement = document.querySelector('.profile-bio');
+    if (bioElement) {
+        // You can set a default bio or use a custom bio field from the API if available
+        bioElement.textContent = 'No bio yet.';
     }
 }
 
@@ -190,11 +183,9 @@ function handleImageUpload(type) {
                 // 1. Upload the image file to your server
                 // 2. Get back the URL
                 // 3. Update the user profile with:
-                /*
                 const updateData = {};
                 updateData[type] = imageUrl;
                 await AleyAPI.User.updateProfile(updateData);
-                */
                 
             } catch (error) {
                 console.error('Error updating profile image:', error);

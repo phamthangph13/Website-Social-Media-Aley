@@ -31,11 +31,67 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Set active menu based on current page
             setActiveMenu();
+            
+            // Load user data into sidebar
+            loadUserDataForSidebar();
         })
         .catch(error => {
             console.error('Error loading sidebar menu:', error);
         });
 });
+
+/**
+ * Loads user data into the sidebar
+ */
+async function loadUserDataForSidebar() {
+    try {
+        // Check if user is logged in
+        if (!AleyAPI.Auth.isLoggedIn()) {
+            console.log('User not logged in. Sidebar user data will not be loaded.');
+            return;
+        }
+        
+        // Fetch current user data using the existing AleyAPI service
+        const userData = await AleyAPI.User.getCurrentUser();
+        
+        // Update sidebar user profile elements
+        updateSidebarUserProfile(userData);
+        
+    } catch (error) {
+        console.error('Failed to load user data for sidebar:', error);
+        // Don't show an error message in the sidebar to avoid disrupting the UI
+    }
+}
+
+/**
+ * Updates the sidebar user profile with fetched data
+ * @param {Object} userData - The user data from the API
+ */
+function updateSidebarUserProfile(userData) {
+    // Update avatar
+    const avatarElement = document.querySelector('.sidebar .user-profile .avatar img');
+    if (avatarElement) {
+        const defaultAvatar = 'https://i.pravatar.cc/150?img=12'; // Default fallback avatar
+        avatarElement.src = userData.avatar || defaultAvatar;
+        avatarElement.alt = `${userData.fullName}'s avatar`;
+    }
+    
+    // Update user name
+    const nameElement = document.querySelector('.sidebar .user-profile .user-info h4');
+    if (nameElement) {
+        nameElement.textContent = userData.fullName || 'Người dùng Aley';
+    }
+    
+    // Update username/email
+    const usernameElement = document.querySelector('.sidebar .user-profile .user-info p');
+    if (usernameElement) {
+        // Using email as the username with @ prefix
+        const email = userData.email || '';
+        // Extract username part from email (before @)
+        const username = email.split('@')[0];
+        usernameElement.textContent = username ? `@${username}` : '@user';
+    }
+}
 
 /**
  * Sets the active menu item based on current page URL
