@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aley - Trang chủ</title>
+    <link rel="stylesheet" href="Styles/global.css">
+    <link rel="stylesheet" href="Styles/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Thanh điều hướng -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <h1>Aley</h1>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li class="active">
+                        <a href="home.html">
+                            <i class="fas fa-home"></i>
+                            <span>Trang chủ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#explore">
+                            <i class="fas fa-compass"></i>
+                            <span>Khám phá</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#notifications">
+                            <i class="fas fa-bell"></i>
+                            <span>Thông báo</span>
+                            <span class="notification-badge">3</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#messages">
+                            <i class="fas fa-envelope"></i>
+                            <span>Tin nhắn</span>
+                            <span class="notification-badge">5</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#bookmarks">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Đã lưu</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#profile">
+                            <i class="fas fa-user"></i>
+                            <span>Hồ sơ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Cài đặt</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <!-- Nút chuyển đổi chế độ màu sắc -->
+                <div class="theme-toggle-wrapper">
+                    <h4>Chế độ hiển thị</h4>
+                    <div class="theme-toggle">
+                        <button class="theme-btn active" data-theme="light" title="Sáng">
+                            <i class="fas fa-sun"></i>
+                        </button>
+                        <button class="theme-btn" data-theme="dark" title="Tối">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button class="theme-btn" data-theme="auto" title="Hài hòa">
+                            <i class="fas fa-adjust"></i>
+                        </button>
+                        <button class="theme-btn" data-theme="vibrant" title="Rực rỡ">
+                            <i class="fas fa-fire"></i>
+                        </button>
+                        <button class="theme-btn" data-theme="fresh" title="Tươi mát">
+                            <i class="fas fa-leaf"></i>
+                        </button>
+                        <button class="theme-btn" data-theme="sweet" title="Ngọt ngào">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <span class="theme-indicator"></span>
+                    </div>
+                </div>
+                
+                <div class="new-post-btn">
+                    <button>
+                        <i class="fas fa-plus"></i>
+                        <span>Đăng bài</span>
+                    </button>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">
+                        <img src="https://i.pravatar.cc/150?img=12" alt="Avatar">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="user-info">
+                        <h4>Nguyễn Văn A</h4>
+                        <p>@nguyenvana</p>
+                    </div>
+                    <div class="more-options">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Phần nội dung chính -->
+        <main class="main-content">
+            <!-- Phần đăng bài -->
+            <div class="create-post-card card">
+                <div class="card-header">
+                    <h2>Tạo bài viết</h2>
+                </div>
+                <div class="card-body">
+                    <div class="user-input">
+                        <div class="avatar">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="Avatar">
+                        </div>
+                        <div class="post-input">
+                            <textarea placeholder="Bạn đang nghĩ gì?"></textarea>
+                        </div>
+                    </div>
+                    <div class="post-attachments">
+                        <button class="attachment-btn">
+                            <i class="fas fa-image"></i>
+                            <span>Ảnh/Video</span>
+                        </button>
+                        <button class="attachment-btn">
+                            <i class="fas fa-smile"></i>
+                            <span>Cảm xúc</span>
+                        </button>
+                        <button class="attachment-btn">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Check in</span>
+                        </button>
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Đăng</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bảng tin -->
+            <div class="feed">
+                <!-- Bài viết 1 -->
+                <div class="post-card card animate__animated animate__fadeIn">
+                    <div class="card-header post-header">
+                        <div class="post-author">
+                            <div class="avatar">
+                                <img src="https://i.pravatar.cc/150?img=32" alt="Avatar">
+                            </div>
+                            <div class="author-info">
+                                <h4>Trần Thị B</h4>
+                                <p>2 giờ trước</p>
+                            </div>
+                        </div>
+                        <div class="post-options">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body post-content">
+                        <p>Hôm nay thời tiết thật đẹp! 🌞 #cuoituan #hanoi</p>
+                        <div class="post-media">
+                            <img src="https://source.unsplash.com/random/600x400/?hanoi,sunny" alt="Hà Nội ngày nắng">
+                        </div>
+                    </div>
+                    <div class="card-footer post-footer">
+                        <div class="post-stats">
+                            <div class="likes">
+                                <i class="fas fa-heart"></i>
+                                <span>142</span>
+                            </div>
+                            <div class="comments">
+                                <i class="fas fa-comment"></i>
+                                <span>24</span>
+                            </div>
+                            <div class="shares">
+                                <i class="fas fa-share"></i>
+                                <span>8</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn">
+                                <i class="far fa-heart"></i>
+                                <span>Thích</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-comment"></i>
+                                <span>Bình luận</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-share-square"></i>
+                                <span>Chia sẻ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài viết 2 -->
+                <div class="post-card card animate__animated animate__fadeIn">
+                    <div class="card-header post-header">
+                        <div class="post-author">
+                            <div class="avatar">
+                                <img src="https://i.pravatar.cc/150?img=68" alt="Avatar">
+                            </div>
+                            <div class="author-info">
+                                <h4>Lê Văn C</h4>
+                                <p>5 giờ trước</p>
+                            </div>
+                        </div>
+                        <div class="post-options">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body post-content">
+                        <p>Vừa hoàn thành dự án mới! Cảm ơn team đã đồng hành cùng tôi suốt thời gian qua. 👨‍💻👩‍💻 #teamwork #project</p>
+                        <div class="post-media grid-media">
+                            <img src="https://source.unsplash.com/random/500x300/?office,team" alt="Team làm việc">
+                            <img src="https://source.unsplash.com/random/500x300/?celebration" alt="Ăn mừng">
+                            <img src="https://source.unsplash.com/random/500x300/?project" alt="Dự án">
+                            <img src="https://source.unsplash.com/random/500x300/?success" alt="Thành công">
+                        </div>
+                    </div>
+                    <div class="card-footer post-footer">
+                        <div class="post-stats">
+                            <div class="likes">
+                                <i class="fas fa-heart"></i>
+                                <span>256</span>
+                            </div>
+                            <div class="comments">
+                                <i class="fas fa-comment"></i>
+                                <span>47</span>
+                            </div>
+                            <div class="shares">
+                                <i class="fas fa-share"></i>
+                                <span>12</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn">
+                                <i class="far fa-heart"></i>
+                                <span>Thích</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-comment"></i>
+                                <span>Bình luận</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-share-square"></i>
+                                <span>Chia sẻ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bài viết 3 -->
+                <div class="post-card card animate__animated animate__fadeIn">
+                    <div class="card-header post-header">
+                        <div class="post-author">
+                            <div class="avatar">
+                                <img src="https://i.pravatar.cc/150?img=23" alt="Avatar">
+                            </div>
+                            <div class="author-info">
+                                <h4>Phạm Thị D</h4>
+                                <p>Hôm qua lúc 20:30</p>
+                            </div>
+                        </div>
+                        <div class="post-options">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body post-content">
+                        <p>Vừa hoàn thành cuốn sách "Người giàu có nhất thành Babylon". Đây là những suy nghĩ của tôi về cuốn sách này...</p>
+                        <div class="read-more">
+                            <a href="#">Xem thêm</a>
+                        </div>
+                    </div>
+                    <div class="card-footer post-footer">
+                        <div class="post-stats">
+                            <div class="likes">
+                                <i class="fas fa-heart"></i>
+                                <span>89</span>
+                            </div>
+                            <div class="comments">
+                                <i class="fas fa-comment"></i>
+                                <span>31</span>
+                            </div>
+                            <div class="shares">
+                                <i class="fas fa-share"></i>
+                                <span>5</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn">
+                                <i class="far fa-heart"></i>
+                                <span>Thích</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-comment"></i>
+                                <span>Bình luận</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-share-square"></i>
+                                <span>Chia sẻ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Phần bên phải -->
+        <aside class="right-sidebar">
+            <!-- Tìm kiếm -->
+            <div class="search-box">
+                <div class="search-input">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm trên Aley...">
+                </div>
+            </div>
+
+            <!-- Xu hướng -->
+            <div class="trends-card card">
+                <div class="card-header">
+                    <h2>Xu hướng</h2>
+                    <a href="#" class="see-more">Xem tất cả</a>
+                </div>
+                <div class="card-body">
+                    <ul class="trending-list">
+                        <li class="trending-item">
+                            <div class="trend-info">
+                                <span class="trend-category">Công nghệ</span>
+                                <h4>#AI2023</h4>
+                                <span class="trend-count">5.2K bài viết</span>
+                            </div>
+                        </li>
+                        <li class="trending-item">
+                            <div class="trend-info">
+                                <span class="trend-category">Giải trí</span>
+                                <h4>#BlockbusterMovie</h4>
+                                <span class="trend-count">3.8K bài viết</span>
+                            </div>
+                        </li>
+                        <li class="trending-item">
+                            <div class="trend-info">
+                                <span class="trend-category">Thể thao</span>
+                                <h4>#WorldCup2023</h4>
+                                <span class="trend-count">12.7K bài viết</span>
+                            </div>
+                        </li>
+                        <li class="trending-item">
+                            <div class="trend-info">
+                                <span class="trend-category">Thời trang</span>
+                                <h4>#SummerFashion</h4>
+                                <span class="trend-count">2.3K bài viết</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bạn bè đang hoạt động -->
+            <div class="active-friends-card card">
+                <div class="card-header">
+                    <h2>Đang hoạt động</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="active-friends-list">
+                        <li class="active-friend">
+                            <div class="friend-avatar">
+                                <img src="https://i.pravatar.cc/150?img=45" alt="Friend Avatar">
+                                <span class="online-status"></span>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Hoàng Văn E</h4>
+                                <p>Đang hoạt động</p>
+                            </div>
+                        </li>
+                        <li class="active-friend">
+                            <div class="friend-avatar">
+                                <img src="https://i.pravatar.cc/150?img=27" alt="Friend Avatar">
+                                <span class="online-status"></span>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Trần Thị F</h4>
+                                <p>Đang hoạt động</p>
+                            </div>
+                        </li>
+                        <li class="active-friend">
+                            <div class="friend-avatar">
+                                <img src="https://i.pravatar.cc/150?img=52" alt="Friend Avatar">
+                                <span class="online-status"></span>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Nguyễn Văn G</h4>
+                                <p>10 phút trước</p>
+                            </div>
+                        </li>
+                        <li class="active-friend">
+                            <div class="friend-avatar">
+                                <img src="https://i.pravatar.cc/150?img=63" alt="Friend Avatar">
+                                <span class="online-status"></span>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Lê Thị H</h4>
+                                <p>30 phút trước</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Gợi ý bạn bè -->
+            <div class="suggested-friends-card card">
+                <div class="card-header">
+                    <h2>Gợi ý kết bạn</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="suggested-friends-list">
+                        <li class="suggested-friend">
+                            <div class="friend-avatar">
+                                <img src="https://i.pravatar.cc/150?img=33" alt="Suggested Friend">
+                            </div>
+                            <div class="friend-info">
+                                <h4>Vũ Văn I</h4>
+                                <p>5 bạn chung</p>
+                            </div>
+                            <div class="friend-actions">
+                                <button class="accept-btn">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                                <button class="reject-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </li>
+                        <li class="suggested-friend">
+                            <div class="friend-avatar">
+                                <img src="https://i.pravatar.cc/150?img=47" alt="Suggested Friend">
+                            </div>
+                            <div class="friend-info">
+                                <h4>Phạm Thị K</h4>
+                                <p>2 bạn chung</p>
+                            </div>
+                            <div class="friend-actions">
+                                <button class="accept-btn">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                                <button class="reject-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="sidebar-footer">
+                <ul class="footer-links">
+                    <li><a href="#">Giới thiệu</a></li>
+                    <li><a href="#">Trợ giúp</a></li>
+                    <li><a href="#">Điều khoản</a></li>
+                    <li><a href="#">Quyền riêng tư</a></li>
+                </ul>
+                <p>&copy; 2023 Aley. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hiệu ứng hover cho các menu
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            menuItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('active')) {
+                        this.classList.add('hover');
+                    }
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.classList.remove('hover');
+                });
+            });
+            
+            // Hiệu ứng khi scroll
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop) {
+                    // Scroll xuống
+                    document.querySelector('.sidebar').classList.add('sidebar-hidden');
+                } else {
+                    // Scroll lên
+                    document.querySelector('.sidebar').classList.remove('sidebar-hidden');
+                }
+                
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, false);
+            
+            // Hiệu ứng cho nút thích
+            const likeButtons = document.querySelectorAll('.action-btn:nth-child(1)');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.toggle('liked');
+                    const icon = this.querySelector('i');
+                    
+                    if (this.classList.contains('liked')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        
+                        // Hiệu ứng heart bouncing
+                        icon.classList.add('animate__animated', 'animate__heartBeat');
+                        setTimeout(() => {
+                            icon.classList.remove('animate__animated', 'animate__heartBeat');
+                        }, 1000);
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                });
+            });
+            
+            // Hiệu ứng khi load trang
+            const postCards = document.querySelectorAll('.post-card');
+            setTimeout(() => {
+                postCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 200);
+                });
+            }, 300);
+            
+            // Xử lý chuyển đổi chế độ sáng/tối/hài hòa (vàng-nâu)
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            const htmlElement = document.documentElement;
+            
+            // Hàm để thiết lập chế độ
+            function setTheme(theme) {
+                htmlElement.setAttribute('data-theme', theme);
+                
+                // Lưu chế độ đã chọn vào localStorage
+                localStorage.setItem('preferred-theme', theme);
+                
+                // Cập nhật trạng thái active cho nút
+                themeButtons.forEach(btn => {
+                    if (btn.getAttribute('data-theme') === theme) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Kiểm tra xem người dùng đã chọn chế độ nào trước đó
+            const savedTheme = localStorage.getItem('preferred-theme');
+            
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                // Mặc định là chế độ sáng nếu không có lựa chọn trước đó
+                setTheme('light');
+            }
+            
+            // Thiết lập sự kiện khi click vào các nút chuyển đổi chế độ
+            themeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    setTheme(theme);
+                    
+                    // Thêm hiệu ứng khi chuyển đổi
+                    this.classList.add('animate__animated', 'animate__rubberBand');
+                    setTimeout(() => {
+                        this.classList.remove('animate__animated', 'animate__rubberBand');
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

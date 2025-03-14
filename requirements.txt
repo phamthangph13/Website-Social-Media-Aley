@@ -1,9 +1,0 @@
-Flask
-Werkzeug
-Flask-Cors
-pymongo
-python-dotenv
-PyJWT
-Flask-Mail
-pymongo
-mongomock
