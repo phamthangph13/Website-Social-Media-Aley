@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aley - Hồ sơ</title>
+    <link rel="stylesheet" href="Styles/global.css">
+    <link rel="stylesheet" href="Styles/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Thanh điều hướng - sẽ được load từ sidebar-menu.html -->
+        <div class="sidebar-container"></div>
+
+        <!-- Phần nội dung chính -->
+        <main class="main-content">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-cover">
+                    <img src="https://marketplace.canva.com/EAF3xGNlNSc/2/0/1600w/canva-xanh-l%C3%A1-v%C3%A0ng-phong-c%E1%BA%A3nh-c%C3%A2u-l%E1%BA%A1c-b%E1%BB%99-du-l%E1%BB%8Bch-%E1%BA%A3nh-b%C3%ACa-nh%C3%B3m-facebook-DqKwLtooIqU.jpg" alt="Cover Photo">
+                    <button class="edit-cover-btn">
+                        <i class="fas fa-camera"></i>
+                        <span>Thay đổi ảnh bìa</span>
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <img src="https://i.pravatar.cc/150?img=1" alt="Profile Avatar">
+                        <button class="edit-avatar-btn">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <div class="profile-details">
+                        <div class="profile-name">
+                            <h1>Nguyễn Văn A</h1>
+                            <span class="verified-badge">
+                                <i class="fas fa-check-circle"></i>
+                            </span>
+                        </div>
+                        <p class="profile-bio">Nhà thiết kế UI/UX | Content Creator | Tech Enthusiast</p>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">1.2K</span>
+                                <span class="stat-label">Bài viết</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">5.6K</span>
+                                <span class="stat-label">Người theo dõi</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">3.8K</span>
+                                <span class="stat-label">Đang theo dõi</span>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="primary-btn">
+                                <i class="fas fa-edit"></i>
+                                <span>Chỉnh sửa hồ sơ</span>
+                            </button>
+                            <button class="secondary-btn">
+                                <i class="fas fa-share"></i>
+                                <span>Chia sẻ</span>
+                            </button>
+                            <button class="secondary-btn">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Navigation -->
+            <div class="profile-nav">
+                <nav>
+                    <a href="#" class="active">
+                        <i class="fas fa-th-large"></i>
+                        <span>Bài viết</span>
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-image"></i>
+                        <span>Ảnh</span>
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-video"></i>
+                        <span>Video</span>
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-users"></i>
+                        <span>Bạn bè</span>
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Đã lưu</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Posts Grid -->
+                <div class="posts-grid">
+                    <!-- Post Item -->
+                    <div class="post-item">
+                        <div class="post-header">
+                            <div class="post-author">
+                                <img src="https://i.pravatar.cc/150?img=1" alt="Author">
+                                <div class="author-info">
+                                    <h4>Nguyễn Văn A</h4>
+                                    <span class="post-time">2 giờ trước</span>
+                                </div>
+                            </div>
+                            <button class="post-menu">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                        <div class="post-content">
+                            <p>Chia sẻ một số thiết kế UI mới nhất của tôi. Các bạn thấy thế nào? 😊</p>
+                            <div class="post-media">
+                                <img src="https://source.unsplash.com/random/800x600/?design" alt="Post Image">
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>1.2K</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-comment"></i>
+                                <span>45</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-share"></i>
+                                <span>23</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- More posts will be loaded here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Phần bên phải - sẽ được load từ right-sidebar.html -->
+        <div class="right-sidebar-container"></div>
+    </div>
+
+    <!-- Javascript -->
+    <script src="../Scripts/sidebar-loader.js"></script>
+    <script src="../Scripts/right-sidebar-loader.js"></script>
+    <script src="../Scripts/page-transition.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hiệu ứng cho các nút trong profile
+            const actionButtons = document.querySelectorAll('.primary-btn, .secondary-btn');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.add('animate__animated', 'animate__pulse');
+                    setTimeout(() => {
+                        this.classList.remove('animate__animated', 'animate__pulse');
+                    }, 1000);
+                });
+            });
+
+            // Hiệu ứng cho navigation
+            const navLinks = document.querySelectorAll('.profile-nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Hiệu ứng khi load trang
+            const animatedElements = document.querySelectorAll('.animate__animated');
+            setTimeout(() => {
+                animatedElements.forEach((element, index) => {
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, index * 200);
+                });
+            }, 300);
+        });
+    </script>
+</body>
+</html> 
