@@ -67,68 +67,39 @@ class PostLoader {
                     );
                     
                     if (visiblePosts.length > 0) {
-                        // For demonstration purposes, mark some posts as from friends
-                        // and others as from non-friends (to show the friend button)
+                        // Process posts to check ownership correctly
                         visiblePosts.forEach((post, index) => {
-                            // For demo purposes, set a post created by the current user 
-                            if (index === 0) {
-                                // This is a post by the current user
+                            // Check if this post belongs to the current user
+                            const currentUserId = localStorage.getItem('aley_user_id');
+                            const currentUserEmail = localStorage.getItem('aley_user_email');
+                            const currentUserName = localStorage.getItem('aley_user_name');
+                            const authorId = post.author.id || post.author.user_id || post.author._id;
+                            const authorName = post.author.name;
+                            
+                            // Check if author name matches or contains the current user's name
+                            const nameMatches = currentUserName && authorName && 
+                                (authorName === currentUserName || 
+                                 authorName.includes(currentUserName) || 
+                                 currentUserName.includes(authorName));
+                            
+                            // Check if this is the current user's post - ONLY using real data, no forced assignment
+                            const isUserPost = 
+                                post.is_own_post === true ||
+                                (currentUserId && authorId === currentUserId) || 
+                                (currentUserEmail && post.author.email === currentUserEmail) ||
+                                nameMatches;
+                            
+                            if (isUserPost) {
+                                // This is the current user's post
                                 post.is_own_post = true;
-                                post.author.id = localStorage.getItem('aley_user_id');
-                                post.author.email = localStorage.getItem('aley_user_email');
-                                post.author.name = localStorage.getItem('aley_user_name') || 'Phạm Thắng Đẹp Trai';
-                            } 
-                            // Process all other posts
-                            else {
-                                // Check if this post belongs to the current user
-                                const currentUserId = localStorage.getItem('aley_user_id');
-                                const currentUserEmail = localStorage.getItem('aley_user_email');
-                                const currentUserName = localStorage.getItem('aley_user_name');
-                                const authorId = post.author.id || post.author.user_id || post.author._id;
-                                const authorName = post.author.name;
                                 
-                                // Check if author name matches or contains the current user's name
-                                const nameMatches = currentUserName && authorName && 
-                                    (authorName === currentUserName || 
-                                     authorName.includes(currentUserName) || 
-                                     currentUserName.includes(authorName));
-                                
-                                // Check if this is the current user's post
-                                const isUserPost = 
-                                    post.is_own_post === true ||
-                                    (currentUserId && authorId === currentUserId) || 
-                                    (currentUserEmail && post.author.email === currentUserEmail) ||
-                                    nameMatches;
-                                
-                                if (isUserPost) {
-                                    // This is the current user's post
-                                    post.is_own_post = true;
-                                    
-                                    // Ensure consistent author information
-                                    if (!post.author.id) post.author.id = currentUserId;
-                                    if (!post.author.email) post.author.email = currentUserEmail;
-                                    if (!post.author.name) post.author.name = currentUserName;
-                                } else {
-                                    // This is another user's post - explicitly mark it as not own post
-                                    post.is_own_post = false;
-                                    
-                                    // Additional checks by comparing author information with current user
-                                    if (!post.is_own_post && post.author) {
-                                        const authorId = post.author.id || post.author.user_id || post.author._id;
-                                        const authorName = post.author.name;
-                                        
-                                        post.is_own_post = 
-                                            // Check by ID
-                                            (currentUserId && authorId && authorId === currentUserId) ||
-                                            // Check by email
-                                            (currentUserEmail && post.author.email && post.author.email === currentUserEmail) ||
-                                            // Check by name
-                                            (currentUserName && authorName && 
-                                                (authorName === currentUserName || 
-                                                 authorName.includes(currentUserName) ||
-                                                 currentUserName.includes(authorName)));
-                                    }
-                                }
+                                // Ensure consistent author information
+                                if (!post.author.id) post.author.id = currentUserId;
+                                if (!post.author.email) post.author.email = currentUserEmail;
+                                if (!post.author.name) post.author.name = currentUserName;
+                            } else {
+                                // This is another user's post - explicitly mark it as not own post
+                                post.is_own_post = false;
                             }
                             
                             const postElement = this.createPostElement(post);
