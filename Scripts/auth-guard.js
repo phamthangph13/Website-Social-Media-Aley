@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redirect after a short delay
             setTimeout(() => {
-                window.location.href = '/';  // Redirect to the main login page
+                window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/';  // Redirect to the main login page
             }, 1500);
         }
     }

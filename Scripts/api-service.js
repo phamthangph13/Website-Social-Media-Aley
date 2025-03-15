@@ -56,7 +56,7 @@ const AleyAPI = {
                 
                 // Redirect to login page after a short delay
                 setTimeout(() => {
-                    window.location.href = '/index.html';
+                    window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/';
                 }, 1500);
             }
             
