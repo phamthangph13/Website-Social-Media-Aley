@@ -35,7 +35,7 @@
  */
 
 const AleyAPI = {
-    // Base URL for API calls
+    // Base URL for API calls - force HTTPS
     baseUrl: 'https://website-social-media-aley-back-end.onrender.com',
     
     // Utility methods
@@ -90,6 +90,24 @@ const AleyAPI = {
         return token ? { 'Authorization': `Bearer ${token}` } : {};
     },
     
+    // Helper to ensure secure URLs and handle API path issues
+    _getSecureUrl: function(path, includeApiPrefix = false) {
+        // Start with the baseUrl, ensure it's HTTPS
+        let secureBaseUrl = this.baseUrl;
+        if (secureBaseUrl.startsWith('http://')) {
+            secureBaseUrl = secureBaseUrl.replace('http://', 'https://');
+            console.warn('Forced HTTPS in baseUrl');
+        }
+        
+        // Add /api/ prefix if requested
+        const apiPrefix = includeApiPrefix ? '/api' : '';
+        
+        // Ensure path starts with / but doesn't duplicate if baseUrl ends with /
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        
+        return `${secureBaseUrl}${apiPrefix}${cleanPath}`;
+    },
+    
     // Authentication methods
     Auth: {
         // Check if user is logged in
@@ -99,38 +117,86 @@ const AleyAPI = {
         
         // Register a new user
         register: async function(userData) {
-            const response = await fetch(`${AleyAPI.baseUrl}/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
-            
-            return AleyAPI._handleResponse(response);
+            try {
+                // Try without /api/ prefix first
+                const registerUrl = AleyAPI._getSecureUrl('/auth/register');
+                console.log('Attempting registration with URL:', registerUrl);
+                
+                const response = await fetch(registerUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                return AleyAPI._handleResponse(response);
+            } catch (error) {
+                console.error('Registration failed, trying with /api/ prefix', error);
+                
+                // Try with /api/ prefix as fallback
+                const alternateUrl = AleyAPI._getSecureUrl('/auth/register', true);
+                console.log('Alternate registration URL:', alternateUrl);
+                
+                const response = await fetch(alternateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                return AleyAPI._handleResponse(response);
+            }
         },
         
         // Login user
         login: async function(email, password) {
-            const fullUrl = `${AleyAPI.baseUrl}/auth/login`;
-            console.log('Login URL:', fullUrl);
-            
-            const response = await fetch(fullUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            });
-            
-            const data = await AleyAPI._handleResponse(response);
-            
-            // Save token to localStorage
-            if (data.token) {
-                localStorage.setItem('aley_token', data.token);
+            try {
+                // Try without /api/ prefix first
+                const loginUrl = AleyAPI._getSecureUrl('/auth/login');
+                console.log('Attempting login with URL:', loginUrl);
+                
+                const response = await fetch(loginUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await AleyAPI._handleResponse(response);
+                
+                // Save token to localStorage
+                if (data.token) {
+                    localStorage.setItem('aley_token', data.token);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('Login failed, trying with /api/ prefix', error);
+                
+                // Try with /api/ prefix as fallback
+                const alternateUrl = AleyAPI._getSecureUrl('/auth/login', true);
+                console.log('Alternate login URL:', alternateUrl);
+                
+                const response = await fetch(alternateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await AleyAPI._handleResponse(response);
+                
+                // Save token to localStorage
+                if (data.token) {
+                    localStorage.setItem('aley_token', data.token);
+                }
+                
+                return data;
             }
-            
-            return data;
         },
         
         // Logout user
