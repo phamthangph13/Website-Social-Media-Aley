@@ -12,10 +12,43 @@ const AleyAPI = {
         const data = await response.json();
         
         if (!response.ok) {
+            // Check for token expiration (401 Unauthorized)
+            if (response.status === 401) {
+                console.log('Token expired or invalid. Logging out...');
+                // Clear the token from local storage
+                localStorage.removeItem('aley_token');
+                localStorage.removeItem('aley_user_avatar');
+                localStorage.removeItem('aley_user_name');
+                
+                // Show brief notification to user
+                this._showExpiredTokenNotification();
+                
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 1500);
+            }
+            
             throw new Error(data.message || 'Something went wrong');
         }
         
         return data;
+    },
+    
+    _showExpiredTokenNotification: function() {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.position = 'fixed';
+        notification.style.top = '0';
+        notification.style.left = '0';
+        notification.style.width = '100%';
+        notification.style.padding = '15px';
+        notification.style.backgroundColor = '#f8d7da';
+        notification.style.color = '#721c24';
+        notification.style.textAlign = 'center';
+        notification.style.zIndex = '9999';
+        notification.textContent = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại...';
+        document.body.prepend(notification);
     },
     
     _getAuthHeader: function() {
@@ -147,7 +180,10 @@ const AleyAPI = {
         // Search users
         searchUsers: async function(query, page = 1, limit = 10) {
             const response = await fetch(`${AleyAPI.baseUrl}/users/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    ...AleyAPI._getAuthHeader()
+                }
             });
             
             return AleyAPI._handleResponse(response);
@@ -156,7 +192,10 @@ const AleyAPI = {
         // List users (with pagination)
         listUsers: async function(page = 1, limit = 10) {
             const response = await fetch(`${AleyAPI.baseUrl}/users/list?page=${page}&limit=${limit}`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    ...AleyAPI._getAuthHeader()
+                }
             });
             
             return AleyAPI._handleResponse(response);
@@ -170,6 +209,54 @@ const AleyAPI = {
 const postService = {
     // Sử dụng baseUrl từ AleyAPI nếu tồn tại, ngược lại sử dụng mặc định
     baseUrl: (typeof AleyAPI !== 'undefined') ? AleyAPI.baseUrl : 'http://localhost:5000/api',
+    
+    /**
+     * Utility function to handle API response and check for token expiration
+     * @param {Response} response - The fetch API response
+     * @returns {Promise} - Resolved with data or rejected with error
+     */
+    _handleApiResponse: function(response) {
+        // Check for token expiration
+        if (response.status === 401) {
+            console.log('Token expired or invalid. Logging out...');
+            // Clear the token from local storage
+            localStorage.removeItem('aley_token');
+            localStorage.removeItem('aley_user_avatar');
+            localStorage.removeItem('aley_user_name');
+            
+            // Show notification and redirect if AleyAPI is available
+            if (typeof AleyAPI !== 'undefined' && AleyAPI._showExpiredTokenNotification) {
+                AleyAPI._showExpiredTokenNotification();
+            } else {
+                // Simple notification if AleyAPI is not available
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.top = '0';
+                notification.style.left = '0';
+                notification.style.width = '100%';
+                notification.style.padding = '15px';
+                notification.style.backgroundColor = '#f8d7da';
+                notification.style.color = '#721c24';
+                notification.style.textAlign = 'center';
+                notification.style.zIndex = '9999';
+                notification.textContent = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại...';
+                document.body.prepend(notification);
+            }
+            
+            // Redirect to login page after a short delay
+            setTimeout(() => {
+                window.location.href = '/index.html';
+            }, 1500);
+            
+            return Promise.reject({ message: 'Session expired' });
+        }
+        
+        // Normal response handling
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    },
     
     /**
      * Tạo bài viết mới
@@ -238,6 +325,26 @@ const postService = {
                 } else {
                     try {
                         const error = JSON.parse(xhr.responseText);
+                        
+                        // Check for token expiration (401 Unauthorized)
+                        if (xhr.status === 401) {
+                            console.log('Token expired or invalid during post operation. Logging out...');
+                            // Clear the token from local storage
+                            localStorage.removeItem('aley_token');
+                            localStorage.removeItem('aley_user_avatar');
+                            localStorage.removeItem('aley_user_name');
+                            
+                            // Show notification and redirect
+                            if (typeof AleyAPI !== 'undefined' && AleyAPI._showExpiredTokenNotification) {
+                                AleyAPI._showExpiredTokenNotification();
+                            }
+                            
+                            // Redirect to login page after a short delay
+                            setTimeout(() => {
+                                window.location.href = '/index.html';
+                            }, 1500);
+                        }
+                        
                         reject(error);
                     } catch (e) {
                         reject({
@@ -284,12 +391,7 @@ const postService = {
      */
     getPosts: function(page = 1, limit = 10) {
         return fetch(`${this.baseUrl}/posts/list?page=${page}&limit=${limit}`)
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            });
+            .then(response => this._handleApiResponse(response));
     },
     
     /**
@@ -309,12 +411,7 @@ const postService = {
                 'Authorization': 'Bearer ' + token
             }
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            });
+            .then(response => this._handleApiResponse(response));
     },
     
     /**
@@ -331,12 +428,7 @@ const postService = {
         return fetch(`${this.baseUrl}/posts/user/${userId}?page=${page}&limit=${limit}`, {
             headers: headers
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            });
+            .then(response => this._handleApiResponse(response));
     },
     
     /**
@@ -356,12 +448,7 @@ const postService = {
                 'Authorization': 'Bearer ' + token
             }
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            });
+            .then(response => this._handleApiResponse(response));
     },
     
     /**
@@ -381,12 +468,7 @@ const postService = {
                 'Authorization': 'Bearer ' + token
             }
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            });
+            .then(response => this._handleApiResponse(response));
     },
     
     /**
@@ -409,12 +491,7 @@ const postService = {
             },
             body: JSON.stringify(updateData)
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            });
+            .then(response => this._handleApiResponse(response));
     }
 };
 
