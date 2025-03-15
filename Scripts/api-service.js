@@ -1,3 +1,34 @@
+// Tạo bộ nhớ tạm cho mock API ngay khi file được tải
+(function initializeMockApiDb() {
+    // Khởi tạo sớm để đảm bảo tồn tại trước khi các API được gọi
+    if (!window.apiServiceMockDb) {
+        console.log('Initializing API mock database early');
+        window.apiServiceMockDb = {
+            friendRequests: {},
+            friendships: {},
+            requestCounter: 1000
+        };
+        
+        // Lưu xuống localStorage để duy trì giữa các lần làm mới trang
+        try {
+            const savedDb = localStorage.getItem('apiServiceMockDb');
+            if (savedDb) {
+                const parsedDb = JSON.parse(savedDb);
+                window.apiServiceMockDb = parsedDb;
+                console.log('Restored mock DB from localStorage:', window.apiServiceMockDb);
+            }
+            
+            // Thiết lập sự kiện để lưu mock DB trước khi tải lại trang
+            window.addEventListener('beforeunload', function() {
+                localStorage.setItem('apiServiceMockDb', JSON.stringify(window.apiServiceMockDb));
+                console.log('Saved mock DB to localStorage');
+            });
+        } catch (e) {
+            console.warn('Could not use localStorage for mock DB persistence:', e);
+        }
+    }
+})();
+
 /**
  * Aley API Service
  * Provides methods to interact with the Aley backend API
@@ -555,6 +586,316 @@ const postService = {
     }
 };
 
+/**
+ * Module quản lý các chức năng liên quan đến bạn bè
+ */
+const friendService = {
+    // Sử dụng baseUrl từ AleyAPI
+    baseUrl: (typeof AleyAPI !== 'undefined') ? AleyAPI.baseUrl : 'http://localhost:5000/api',
+    
+    /**
+     * Lấy danh sách gợi ý kết bạn (những người chưa kết bạn)
+     * @param {number} page - Số trang
+     * @param {number} limit - Số lượng kết quả mỗi trang
+     * @param {string} search - Từ khóa tìm kiếm (tùy chọn)
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    getFriendSuggestions: async function(page = 1, limit = 20, search = '') {
+        const queryParams = new URLSearchParams({
+            page, 
+            limit,
+            ...(search && { search })
+        }).toString();
+        
+        const response = await fetch(`${this.baseUrl}/friends/suggestions?${queryParams}`, {
+            method: 'GET',
+            headers: {
+                ...this._getAuthHeader(),
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Kiểm tra trạng thái kết bạn với một người dùng
+     * @param {string} userId - ID của người dùng cần kiểm tra
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    checkFriendshipStatus: async function(userId) {
+        console.log(`Checking friendship status for user ID: ${userId}`);
+        
+        try {
+            // 1. Kiểm tra xem người dùng có trong danh sách bạn bè không
+            // Lưu ý: API_DOC_FRIEND không có endpoint cụ thể cho việc này
+            // Nên chúng ta sẽ sử dụng kết hợp các API khác để xác định
+
+            // 2. Kiểm tra xem đã gửi lời mời kết bạn chưa (từ danh sách lời mời đã gửi)
+            const sentRequestsResponse = await fetch(`${this.baseUrl}/friends/requests/sent?page=1&limit=100`, {
+                method: 'GET',
+                headers: {
+                    ...this._getAuthHeader()
+                }
+            });
+            
+            const sentRequests = await this._handleApiResponse(sentRequestsResponse);
+            
+            if (sentRequests.success && sentRequests.data && sentRequests.data.requests) {
+                // Tìm trong danh sách lời mời đã gửi
+                const sentRequest = sentRequests.data.requests.find(req => 
+                    req.recipient && (req.recipient.user_id === userId || req.recipient_id === userId)
+                );
+                
+                if (sentRequest) {
+                    // Đã gửi lời mời kết bạn
+                    return {
+                        success: true,
+                        data: {
+                            status: 'pending_sent',
+                            user_id: userId,
+                            request_id: sentRequest.request_id
+                        }
+                    };
+                }
+            }
+            
+            // 3. Kiểm tra xem đã nhận lời mời kết bạn chưa (từ danh sách lời mời đã nhận)
+            const receivedRequestsResponse = await fetch(`${this.baseUrl}/friends/requests/received?page=1&limit=100`, {
+                method: 'GET',
+                headers: {
+                    ...this._getAuthHeader()
+                }
+            });
+            
+            const receivedRequests = await this._handleApiResponse(receivedRequestsResponse);
+            
+            if (receivedRequests.success && receivedRequests.data && receivedRequests.data.requests) {
+                // Tìm trong danh sách lời mời đã nhận
+                const receivedRequest = receivedRequests.data.requests.find(req => 
+                    req.sender && (req.sender.user_id === userId || req.sender_id === userId)
+                );
+                
+                if (receivedRequest) {
+                    // Đã nhận lời mời kết bạn
+                    return {
+                        success: true,
+                        data: {
+                            status: 'pending_received',
+                            user_id: userId,
+                            request_id: receivedRequest.request_id
+                        }
+                    };
+                }
+            }
+            
+            // 4. Kiểm tra xem có trong danh sách gợi ý kết bạn không
+            // Nếu có trong gợi ý => chưa kết bạn và chưa gửi/nhận lời mời
+            const suggestionsResponse = await fetch(`${this.baseUrl}/friends/suggestions?page=1&limit=100`, {
+                method: 'GET',
+                headers: {
+                    ...this._getAuthHeader()
+                }
+            });
+            
+            const suggestions = await this._handleApiResponse(suggestionsResponse);
+            
+            if (suggestions.success && suggestions.data && suggestions.data.suggestions) {
+                // Tìm trong danh sách gợi ý
+                const suggestion = suggestions.data.suggestions.find(sug => 
+                    sug.user_id === userId
+                );
+                
+                if (suggestion) {
+                    // Người dùng có trong gợi ý => chưa kết bạn
+                    return {
+                        success: true,
+                        data: {
+                            status: 'not_friends',
+                            user_id: userId
+                        }
+                    };
+                }
+            }
+            
+            // 5. Nếu không thuộc các trường hợp trên, giả định là đã là bạn bè
+            // (Lưu ý: Đây là giả định dựa trên việc không tìm thấy trong các danh sách khác)
+            return {
+                success: true,
+                data: {
+                    status: 'friends',
+                    user_id: userId
+                }
+            };
+            
+        } catch (error) {
+            console.error('Error checking friendship status:', error);
+            // Nếu xảy ra lỗi, giả định chưa kết bạn để hiển thị nút kết bạn
+            return {
+                success: true,
+                data: {
+                    status: 'not_friends',
+                    user_id: userId
+                }
+            };
+        }
+    },
+    
+    /**
+     * Gửi lời mời kết bạn
+     * @param {string} recipientId - ID của người nhận lời mời
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    sendFriendRequest: async function(recipientId) {
+        console.log(`Sending friend request to user ID: ${recipientId}`);
+        
+        const response = await fetch(`${this.baseUrl}/friends/requests`, {
+            method: 'POST',
+            headers: {
+                ...this._getAuthHeader(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ recipient_id: recipientId })
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Hủy lời mời kết bạn đã gửi
+     * @param {string} requestId - ID của lời mời kết bạn
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    cancelFriendRequest: async function(requestId) {
+        console.log(`Canceling friend request ID: ${requestId}`);
+        
+        const response = await fetch(`${this.baseUrl}/friends/requests/${requestId}`, {
+            method: 'DELETE',
+            headers: {
+                ...this._getAuthHeader()
+            }
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Xóa bạn bè
+     * @param {string} friendId - ID của người bạn cần xóa
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    unfriendUser: async function(friendId) {
+        const response = await fetch(`${this.baseUrl}/friends/${friendId}`, {
+            method: 'DELETE',
+            headers: {
+                ...this._getAuthHeader()
+            }
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Chấp nhận lời mời kết bạn
+     * @param {string} requestId - ID của lời mời kết bạn
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    acceptFriendRequest: async function(requestId) {
+        console.log(`Accepting friend request ID: ${requestId}`);
+        
+        const response = await fetch(`${this.baseUrl}/friends/requests/${requestId}/accept`, {
+            method: 'PATCH',
+            headers: {
+                ...this._getAuthHeader()
+            }
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Lấy danh sách lời mời kết bạn đã nhận
+     * @param {number} page - Số trang
+     * @param {number} limit - Số lượng kết quả mỗi trang
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    getReceivedFriendRequests: async function(page = 1, limit = 20) {
+        const response = await fetch(`${this.baseUrl}/friends/requests/received?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                ...this._getAuthHeader()
+            }
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Lấy danh sách lời mời kết bạn đã gửi
+     * @param {number} page - Số trang
+     * @param {number} limit - Số lượng kết quả mỗi trang
+     * @returns {Promise} - Promise chứa kết quả API
+     */
+    getSentFriendRequests: async function(page = 1, limit = 20) {
+        const response = await fetch(`${this.baseUrl}/friends/requests/sent?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                ...this._getAuthHeader()
+            }
+        });
+        
+        return this._handleApiResponse(response);
+    },
+    
+    /**
+     * Utility function to get auth header
+     * @returns {Object} - The auth header object
+     */
+    _getAuthHeader: function() {
+        const token = localStorage.getItem('aley_token');
+        return token ? { 'Authorization': `Bearer ${token}` } : {};
+    },
+    
+    /**
+     * Utility function to handle API response
+     * @param {Response} response - The fetch API response
+     * @returns {Promise} - Resolved with data or rejected with error
+     */
+    _handleApiResponse: async function(response) {
+        try {
+            const data = await response.json();
+            
+            if (!response.ok) {
+                console.error('API error:', data);
+                
+                // Tạo lỗi chi tiết hơn với thông tin từ phản hồi API
+                const error = new Error(data.error?.message || 'Something went wrong');
+                
+                // Sao chép các thuộc tính từ data.error vào đối tượng lỗi để sử dụng sau này
+                if (data.error) {
+                    error.code = data.error.code;
+                    error.status = response.status;
+                    
+                    // Đối với lỗi 409 CONFLICT khi gửi lời mời kết bạn, cố gắng lấy request_id
+                    if (response.status === 409 && data.error.code === 'REQUEST_ALREADY_SENT') {
+                        // Nếu có dữ liệu bổ sung trong phản hồi, ví dụ như request_id
+                        if (data.data && data.data.request_id) {
+                            error.request_id = data.data.request_id;
+                        }
+                    }
+                }
+                
+                throw error;
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('API error:', error);
+            throw error;
+        }
+    }
+};
+
 // Thêm module postService vào apiService
 if (typeof apiService !== 'undefined') {
     apiService.posts = postService;
@@ -567,3 +908,10 @@ if (typeof apiService !== 'undefined') {
     // Expose apiService to global scope
     window.apiService = apiService;
 }
+
+// Thêm friendService vào đối tượng apiService để sử dụng từ bất kỳ tệp nào
+if (typeof apiService === 'undefined') {
+    window.apiService = {};
+}
+
+apiService.friends = friendService;

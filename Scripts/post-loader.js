@@ -112,18 +112,21 @@ class PostLoader {
                                     // This is another user's post - explicitly mark it as not own post
                                     post.is_own_post = false;
                                     
-                                    // By default, assume not friends unless explicitly set
-                                    if (post.is_friend !== true) {
-                                        post.is_friend = false; // Not friends, should show Add Friend button
-                                    }
-                                    
-                                    // For demo purposes only: 
-                                    // Make every 3rd post a "friend" to demonstrate the variation
-                                    if (index % 3 === 0) {
-                                        post.is_friend = true; // This user is a friend - no Add Friend button
-                                        console.log(`Making ${post.author.name} a friend (index ${index})`);
-                                    } else {
-                                        console.log(`${post.author.name} is not a friend - showing Add Friend button (index ${index})`);
+                                    // Additional checks by comparing author information with current user
+                                    if (!post.is_own_post && post.author) {
+                                        const authorId = post.author.id || post.author.user_id || post.author._id;
+                                        const authorName = post.author.name;
+                                        
+                                        post.is_own_post = 
+                                            // Check by ID
+                                            (currentUserId && authorId && authorId === currentUserId) ||
+                                            // Check by email
+                                            (currentUserEmail && post.author.email && post.author.email === currentUserEmail) ||
+                                            // Check by name
+                                            (currentUserName && authorName && 
+                                                (authorName === currentUserName || 
+                                                 authorName.includes(currentUserName) ||
+                                                 currentUserName.includes(authorName)));
                                     }
                                 }
                             }
@@ -265,7 +268,11 @@ class PostLoader {
         }
         
         const isNotOwnPost = !isUserOwnPost;
-        const isNotFriend = post.is_friend !== true;
+        
+        // Cho phép hiển thị nút kết bạn với tất cả bài viết không thuộc về người dùng hiện tại
+        // Trạng thái kết bạn thực tế sẽ được kiểm tra bởi post-interactions.js
+        // thông qua gọi API checkFriendshipStatus
+        const isNotFriend = true;
         
         // Log for debugging
         console.log(`Post ${post.post_id}:`, {
@@ -283,15 +290,17 @@ class PostLoader {
             isNotOwnPost: isNotOwnPost,
             isUserOwnPost: isUserOwnPost,
             originalIsOwnPost: post.is_own_post,
-            isNotFriend: isNotFriend,
-            shouldShowButton: isLoggedIn && isNotOwnPost && isNotFriend
+            shouldShowButton: isLoggedIn && isNotOwnPost
         });
         
         // Generate Add Friend button HTML
         let addFriendHTML = '';
-        if (isLoggedIn && isNotOwnPost && isNotFriend) {
+        if (isLoggedIn && isNotOwnPost) {
+            // Lấy user_id từ post.author
+            const authorId = post.author.id || post.author.user_id || post.author._id || `user_${post.post_id}`;
+            
             addFriendHTML = `
-                <button class="add-friend-btn" title="Kết bạn với ${post.author.name}">
+                <button class="add-friend-btn" data-user-id="${authorId}" title="Kết bạn với ${post.author.name}">
                     <i class="fas fa-user-plus"></i>
                     <span>Kết bạn</span>
                 </button>

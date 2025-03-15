@@ -198,7 +198,31 @@ function setupFriendRequestButtons() {
     
     // Add click event to each button
     addFriendButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
+        if (button.dataset.initialized === 'true') {
+            console.log('Button already initialized, skipping');
+            return; // Skip if already initialized
+        }
+        
+        button.dataset.initialized = 'true';
+        
+        // Check button state on load
+        const postElement = button.closest('.post-card');
+        if (postElement) {
+            const postId = postElement.dataset.postId;
+            const authorElement = postElement.querySelector('.post-author .author-info h4');
+            const authorName = authorElement ? authorElement.textContent.trim().replace(' (Bạn)', '') : 'Unknown';
+            const authorId = button.dataset.userId || `user_${postId}`; // Use data-user-id if available, otherwise generate one
+            
+            // Store the user ID on the button for later use
+            button.dataset.userId = authorId;
+            
+            // Check friendship status via API if available
+            if (typeof apiService !== 'undefined' && apiService.friends && apiService.friends.checkFriendshipStatus) {
+                checkAndUpdateFriendshipStatus(button, authorId, authorName);
+            }
+        }
+        
+        button.addEventListener('click', async function(e) {
             e.preventDefault();
             e.stopPropagation();
             
@@ -206,63 +230,288 @@ function setupFriendRequestButtons() {
             const postElement = this.closest('.post-card');
             const postId = postElement?.dataset.postId;
             
-            // Get the author name
-            const authorName = postElement.querySelector('.post-author .author-info h4').textContent;
-            console.log(`Sending friend request to ${authorName}`);
+            // Get the author name and ID
+            const authorName = postElement.querySelector('.post-author .author-info h4').textContent.trim().replace(' (Bạn)', '');
+            const authorId = this.dataset.userId;
+            
+            // Check if user is logged in
+            if (!localStorage.getItem('aley_token')) {
+                // Show login prompt
+                showLoginPrompt('Bạn cần đăng nhập để gửi lời mời kết bạn');
+                return;
+            }
+            
+            // If the button is already in "sent" state, show confirmation to cancel request
+            if (this.classList.contains('sent')) {
+                // Trực tiếp huỷ lời mời kết bạn mà không cần hiển thị hộp thoại xác nhận
+                try {
+                    const requestId = this.dataset.requestId;
+                    if (requestId && typeof apiService !== 'undefined' && apiService.friends) {
+                        await apiService.friends.cancelFriendRequest(requestId);
+                    }
+                    
+                    // Update button state
+                    this.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
+                    this.classList.remove('sent');
+                    
+                    // Show notification
+                    showToast('success', 'Đã hủy lời mời kết bạn', `Bạn đã hủy lời mời kết bạn với ${authorName}`);
+                } catch (error) {
+                    console.error('Error canceling friend request:', error);
+                    showToast('error', 'Lỗi', 'Không thể hủy lời mời kết bạn. Vui lòng thử lại sau.');
+                }
+                return;
+            }
             
             // Update button appearance immediately for better UX
-            this.innerHTML = '<i class="fas fa-check"></i><span>Đã gửi</span>';
+            this.innerHTML = '<i class="fas fa-times"></i><span>Huỷ lời mời</span>';
             this.classList.add('sent');
-            this.disabled = true;
             
-            // In a real app, you would call the API to send a friend request
-            // For demo purposes, we'll just simulate the API call
-            setTimeout(() => {
-                // Show a confirmation toast or notification
-                const toast = document.createElement('div');
-                toast.className = 'toast toast-success animate__animated animate__fadeInUp';
-                toast.innerHTML = `
-                    <div class="toast-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="toast-content">
-                        <h4>Đã gửi lời mời kết bạn</h4>
-                        <p>Bạn đã gửi lời mời kết bạn đến ${authorName}</p>
-                    </div>
-                    <button class="toast-close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                
-                // Add toast to the document
-                document.body.appendChild(toast);
-                
-                // Handle toast close button
-                const closeBtn = toast.querySelector('.toast-close');
-                closeBtn.addEventListener('click', () => {
-                    toast.classList.add('animate__fadeOutDown');
-                    setTimeout(() => {
-                        toast.remove();
-                    }, 300);
-                });
-                
-                // Auto-remove toast after 5 seconds
-                setTimeout(() => {
-                    if (document.body.contains(toast)) {
-                        toast.classList.add('animate__fadeOutDown');
-                        setTimeout(() => {
-                            if (document.body.contains(toast)) {
-                                toast.remove();
-                            }
-                        }, 300);
+            // Call API to send friend request
+            try {
+                if (typeof apiService !== 'undefined' && apiService.friends) {
+                    const response = await apiService.friends.sendFriendRequest(authorId);
+                    console.log('Friend request sent:', response);
+                    
+                    // Store the request ID on the button for cancel operations
+                    if (response.success && response.data && response.data.request_id) {
+                        this.dataset.requestId = response.data.request_id;
+                        
+                        // Show success notification
+                        showToast('success', 'Đã gửi lời mời kết bạn', `Bạn đã gửi lời mời kết bạn đến ${authorName}. Nhấn vào nút 'Huỷ lời mời' để huỷ.`);
                     }
-                }, 5000);
-            }, 500); // Simulate network delay
+                }
+            } catch (error) {
+                console.error('Error sending friend request:', error);
+                
+                // Kiểm tra xem lỗi có phải do đã gửi lời mời kết bạn cho người này rồi hay không
+                if (error.message && error.message.includes('đã gửi lời mời kết bạn cho người này rồi')) {
+                    // Đây là trường hợp lỗi 409 CONFLICT - đã gửi lời mời rồi
+                    console.log('Already sent friend request to this user');
+                    
+                    // Giữ trạng thái "Huỷ lời mời" và hiển thị thông báo phù hợp
+                    this.innerHTML = '<i class="fas fa-times"></i><span>Huỷ lời mời</span>';
+                    this.classList.add('sent');
+                    
+                    // Thử lấy request_id từ lỗi nếu có
+                    if (error.request_id) {
+                        this.dataset.requestId = error.request_id;
+                    }
+                    
+                    // Hiển thị thông báo thích hợp
+                    showToast('info', 'Đã gửi trước đó', `Bạn đã gửi lời mời kết bạn đến ${authorName} trước đó. Nhấn vào nút 'Huỷ lời mời' để huỷ.`);
+                    
+                    // Gọi kiểm tra lại trạng thái để cố gắng lấy request_id nếu chưa có
+                    if (!this.dataset.requestId) {
+                        try {
+                            checkAndUpdateFriendshipStatus(this, authorId, authorName);
+                        } catch (checkError) {
+                            console.error('Error checking friendship status:', checkError);
+                        }
+                    }
+                } else {
+                    // Các lỗi khác - quay lại trạng thái ban đầu
+                    this.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
+                    this.classList.remove('sent');
+                    
+                    // Show error notification
+                    showToast('error', 'Lỗi', 'Không thể gửi lời mời kết bạn. Vui lòng thử lại sau.');
+                }
+            }
         });
     });
 }
 
-// Export the function to make it globally available
+/**
+ * Check friendship status and update button appearance
+ * @param {HTMLElement} button - The add friend button
+ * @param {string} userId - The user ID to check
+ * @param {string} userName - The user name for notifications
+ */
+async function checkAndUpdateFriendshipStatus(button, userId, userName) {
+    console.log(`Checking friendship status for user: ${userName} (${userId})`);
+    
+    try {
+        const response = await apiService.friends.checkFriendshipStatus(userId);
+        console.log(`Friendship status response for ${userName}:`, response);
+        
+        if (response.success && response.data) {
+            const { status, request_id } = response.data;
+            console.log(`Friendship status for ${userName}: ${status}`);
+            
+            switch (status) {
+                case 'friends':
+                    // Already friends - hide button
+                    console.log(`${userName} is already a friend, hiding button`);
+                    button.style.display = 'none';
+                    break;
+                    
+                case 'pending_sent':
+                    // Friend request already sent
+                    console.log(`Friend request already sent to ${userName}, updating button`);
+                    button.innerHTML = '<i class="fas fa-times"></i><span>Huỷ lời mời</span>';
+                    button.classList.add('sent');
+                    if (request_id) {
+                        button.dataset.requestId = request_id;
+                        console.log(`Stored request_id on button: ${request_id}`);
+                    }
+                    break;
+                    
+                case 'pending_received':
+                    // We received a request from this user
+                    console.log(`Received friend request from ${userName}, updating button to Accept`);
+                    button.innerHTML = '<i class="fas fa-user-check"></i><span>Chấp nhận</span>';
+                    button.classList.add('received');
+                    if (request_id) {
+                        button.dataset.requestId = request_id;
+                        console.log(`Stored request_id on button: ${request_id}`);
+                    }
+                    
+                    // Change click handler for accept functionality
+                    button.addEventListener('click', async function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        try {
+                            if (typeof apiService !== 'undefined' && apiService.friends) {
+                                await apiService.friends.acceptFriendRequest(request_id);
+                            }
+                            
+                            // Update button state
+                            button.style.display = 'none'; // Hide after accepting
+                            
+                            // Show notification
+                            showToast('success', 'Đã chấp nhận lời mời kết bạn', `Bạn và ${userName} đã trở thành bạn bè`);
+                        } catch (error) {
+                            console.error('Error accepting friend request:', error);
+                            showToast('error', 'Lỗi', 'Không thể chấp nhận lời mời kết bạn. Vui lòng thử lại sau.');
+                        }
+                    }, { once: true }); // Only run once
+                    break;
+                    
+                case 'not_friends':
+                default:
+                    // Not friends - keep default button state
+                    console.log(`Not friends with ${userName}, keeping default button state`);
+                    break;
+            }
+        } else {
+            console.warn(`Invalid response when checking friendship status for ${userName}:`, response);
+        }
+    } catch (error) {
+        console.error(`Error checking friendship status for ${userName}:`, error);
+    }
+}
+
+/**
+ * Display a toast notification
+ * @param {string} type - The type of toast (success, error)
+ * @param {string} title - The toast title
+ * @param {string} message - The toast message
+ */
+function showToast(type, title, message) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type} animate__animated animate__fadeInUp`;
+    
+    const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+    
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i class="fas fa-${icon}"></i>
+        </div>
+        <div class="toast-content">
+            <h4>${title}</h4>
+            <p>${message}</p>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Add toast to the document
+    document.body.appendChild(toast);
+    
+    // Handle toast close button
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+        toast.classList.add('animate__fadeOutDown');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    });
+    
+    // Auto-remove toast after 5 seconds
+    setTimeout(() => {
+        if (document.body.contains(toast)) {
+            toast.classList.add('animate__fadeOutDown');
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+/**
+ * Display login prompt when trying to perform actions that require login
+ * @param {string} message - The message to display
+ */
+function showLoginPrompt(message) {
+    // Create modal backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.className = 'login-prompt-modal animate__animated animate__fadeInDown';
+    
+    modal.innerHTML = `
+        <div class="login-prompt-header">
+            <h3>Đăng nhập</h3>
+            <button class="close-modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="login-prompt-body">
+            <p>${message}</p>
+        </div>
+        <div class="login-prompt-footer">
+            <button class="cancel-btn">Huỷ bỏ</button>
+            <button class="login-btn">Đăng nhập ngay</button>
+        </div>
+    `;
+    
+    // Add to document
+    document.body.appendChild(backdrop);
+    document.body.appendChild(modal);
+    
+    // Handle close button
+    const closeBtn = modal.querySelector('.close-modal');
+    const cancelBtn = modal.querySelector('.cancel-btn');
+    const loginBtn = modal.querySelector('.login-btn');
+    
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    
+    loginBtn.addEventListener('click', () => {
+        window.location.href = '/index.html?redirect=' + encodeURIComponent(window.location.href);
+    });
+    
+    function closeModal() {
+        modal.classList.remove('animate__fadeInDown');
+        modal.classList.add('animate__fadeOutUp');
+        
+        setTimeout(() => {
+            if (document.body.contains(modal)) {
+                modal.remove();
+                backdrop.remove();
+            }
+        }, 300);
+    }
+}
+
+// Add to global scope for use in other modules
 window.setupFriendRequestButtons = setupFriendRequestButtons;
 
 // Initialize the add friend buttons when a post is created

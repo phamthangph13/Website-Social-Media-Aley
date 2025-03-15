@@ -729,6 +729,7 @@ body {
     font-size: 15px;
 }
 
+/* Sent state */
 .add-friend-btn.sent {
     background-color: transparent;
     color: var(--success-color);
@@ -746,6 +747,193 @@ body {
     display: none;
 }
 
+/* Received state */
+.add-friend-btn.received {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.add-friend-btn.received:hover {
+    background-color: var(--success-color);
+    opacity: 0.9;
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    min-width: 320px;
+    max-width: 450px;
+}
+
+.toast-success {
+    border-left: 4px solid var(--success-color);
+}
+
+.toast-error {
+    border-left: 4px solid var(--danger-color);
+}
+
+.toast-warning {
+    border-left: 4px solid var(--warning-color);
+}
+
+.toast-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.toast-success .toast-icon {
+    color: var(--success-color);
+}
+
+.toast-error .toast-icon {
+    color: var(--danger-color);
+}
+
+.toast-warning .toast-icon {
+    color: var(--warning-color);
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-content h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+}
+
+.toast-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--text-light);
+    opacity: 0.7;
+    padding: 4px;
+    margin-left: 8px;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* Login Prompt Modal */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+}
+
+.login-prompt-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 90%;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.login-prompt-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-prompt-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.login-prompt-header .close-modal {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+.login-prompt-header .close-modal:hover {
+    opacity: 1;
+}
+
+.login-prompt-body {
+    padding: 20px;
+}
+
+.login-prompt-body p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.login-prompt-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.login-prompt-footer button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-prompt-footer .cancel-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.login-prompt-footer .cancel-btn:hover {
+    background-color: var(--hover-color);
+}
+
+.login-prompt-footer .login-btn {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+}
+
+.login-prompt-footer .login-btn:hover {
+    background-color: var(--primary-dark);
+}
+
 /* Media query for small screens */
 @media (max-width: 576px) {
     .add-friend-btn span {
@@ -761,6 +949,18 @@ body {
     
     .add-friend-btn i {
         margin: 0;
+    }
+    
+    .login-prompt-modal {
+        width: 90%;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 90%;
+        max-width: 90%;
+        left: 5%;
+        right: 5%;
     }
 }
 
