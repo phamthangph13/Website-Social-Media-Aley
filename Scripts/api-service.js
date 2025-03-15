@@ -32,6 +32,9 @@ const AleyAPI = {
             throw new Error(data.message || 'Something went wrong');
         }
         
+        // Không cần xử lý đặc biệt cho trường bio - chỉ dùng profile-bio
+        console.log('API response data:', data);
+        
         return data;
     },
     
@@ -165,13 +168,23 @@ const AleyAPI = {
         
         // Update user profile
         updateProfile: async function(userData) {
+            // Clone userData object to avoid modifying the original object
+            const updateData = { ...userData };
+            
+            // Đảm bảo chỉ dùng profile-bio, xóa trường profileBio nếu có
+            if ('profileBio' in updateData) {
+                delete updateData.profileBio;
+            }
+            
+            console.log('Sending update data to server:', updateData);
+            
             const response = await fetch(`${AleyAPI.baseUrl}/users/update`, {
                 method: 'PUT',
                 headers: {
                     ...AleyAPI._getAuthHeader(),
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(updateData)
             });
             
             return AleyAPI._handleResponse(response);
