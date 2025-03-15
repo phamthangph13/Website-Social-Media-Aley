@@ -35,13 +35,16 @@ class UserAvatarManager {
             
             // Update avatar if element is provided
             if (avatarElement && userData.avatar) {
+                // Xử lý avatar có thể là URL hoặc ID MongoDB
+                const avatarUrl = this.getAvatarUrl(userData.avatar);
+                
                 // Update avatar and remove data-default attribute
-                avatarElement.src = userData.avatar;
+                avatarElement.src = avatarUrl;
                 avatarElement.removeAttribute('data-default');
                 
                 // Save avatar to localStorage for faster access in the future
                 try {
-                    localStorage.setItem('aley_user_avatar', userData.avatar);
+                    localStorage.setItem('aley_user_avatar', userData.avatar); // Lưu giá trị gốc để xử lý sau
                     localStorage.setItem('aley_user_name', userData.fullName || 'Người dùng Aley');
                     
                     // Save email and user ID for post ownership identification
@@ -64,7 +67,7 @@ class UserAvatarManager {
             if (avatarElement) {
                 const savedAvatar = localStorage.getItem('aley_user_avatar');
                 if (savedAvatar) {
-                    avatarElement.src = savedAvatar;
+                    avatarElement.src = this.getAvatarUrl(savedAvatar);
                     avatarElement.removeAttribute('data-default');
                 }
             }
@@ -75,7 +78,27 @@ class UserAvatarManager {
 
     // Get user avatar URL (from localStorage or default)
     getUserAvatarUrl() {
-        return localStorage.getItem('aley_user_avatar') || this.defaultAvatarUrl;
+        const savedAvatar = localStorage.getItem('aley_user_avatar');
+        if (savedAvatar) {
+            return this.getAvatarUrl(savedAvatar);
+        }
+        return this.defaultAvatarUrl;
+    }
+    
+    // Hàm để xử lý avatar có thể là URL hoặc ID MongoDB
+    getAvatarUrl(avatar) {
+        if (!avatar) {
+            return this.fallbackAvatarUrl;
+        }
+        
+        // Kiểm tra nếu avatar là URL (bắt đầu bằng http://, https://, hoặc blob:)
+        if (avatar.startsWith('http://') || avatar.startsWith('https://') || avatar.startsWith('blob:')) {
+            return avatar;
+        } else {
+            // Nếu không phải URL, giả định đây là image_id và tạo URL đến API
+            const apiBaseUrl = AleyAPI ? AleyAPI.baseUrl : 'http://localhost:5000/api';
+            return `${apiBaseUrl}/users/image/${avatar}`;
+        }
     }
 
     // Update all user avatars on the page

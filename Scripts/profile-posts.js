@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         postElement.innerHTML = `
             <div class="post-header">
                 <div class="post-author">
-                    <img src="${post.author.avatar}" alt="Author">
+                    <img src="${getAvatarUrl(post.author.avatar)}" alt="Author">
                     <div class="author-info">
                         <h4>${post.author.name}</h4>
                         <span class="post-time">${formattedDate} ${post.privacy !== 'public' ? `<i class="fas fa-${post.privacy === 'private' ? 'lock' : 'user-friends'}"></i>` : ''}</span>
@@ -387,6 +387,21 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateProgressBar(percent) {
         if (postLoadingProgressBar) {
             postLoadingProgressBar.style.width = percent + '%';
+        }
+    }
+
+    // Hàm để xử lý avatar có thể là URL hoặc ID MongoDB
+    function getAvatarUrl(avatar) {
+        if (!avatar) {
+            return 'https://i.pravatar.cc/150?img=1'; // Avatar mặc định
+        }
+        
+        // Kiểm tra nếu avatar là URL (bắt đầu bằng http://, https://, hoặc blob:)
+        if (avatar.startsWith('http://') || avatar.startsWith('https://') || avatar.startsWith('blob:')) {
+            return avatar;
+        } else {
+            // Nếu không phải URL, giả định đây là image_id và tạo URL đến API
+            return `${apiService.baseUrl || 'http://localhost:5000/api'}/users/image/${avatar}`;
         }
     }
 }); 

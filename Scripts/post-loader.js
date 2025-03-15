@@ -135,7 +135,7 @@ class PostLoader {
             <div class="card-header post-header">
                 <div class="post-author">
                     <div class="avatar">
-                        <img src="${post.author.avatar}" alt="Avatar">
+                        <img src="${this.getAvatarUrl(post.author.avatar)}" alt="Avatar">
                     </div>
                     <div class="author-info">
                         <h4>${post.author.name}</h4>
@@ -312,6 +312,21 @@ class PostLoader {
                 }
             });
         });
+    }
+
+    // Hàm để xử lý avatar có thể là URL hoặc ID MongoDB
+    getAvatarUrl(avatar) {
+        if (!avatar) {
+            return 'https://i.pravatar.cc/150?img=1'; // Avatar mặc định
+        }
+        
+        // Kiểm tra nếu avatar là URL (bắt đầu bằng http://, https://, hoặc blob:)
+        if (avatar.startsWith('http://') || avatar.startsWith('https://') || avatar.startsWith('blob:')) {
+            return avatar;
+        } else {
+            // Nếu không phải URL, giả định đây là image_id và tạo URL đến API
+            return `${apiService.baseUrl || 'http://localhost:5000/api'}/users/image/${avatar}`;
+        }
     }
 }
 
