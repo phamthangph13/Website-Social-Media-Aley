@@ -250,39 +250,85 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const userId = urlParams.get('userId');
                 
-                // Determine which API to call based on whether we're viewing our own profile or someone else's
-                let apiPromise;
-                
+                // If viewing someone else's profile (with userId in URL)
                 if (userId) {
-                    // If viewing someone else's profile, get their posts
-                    apiPromise = apiService.posts.getUserPosts(userId);
-                } else {
-                    // If viewing our own profile, get our feed
-                    apiPromise = apiService.posts.getFeed();
-                }
-                
-                // Process API response
-                apiPromise.then(response => {
-                    // Hide loading state
-                    postsLoading.style.display = 'none';
-                    
-                    if (response.data && response.data.posts && response.data.posts.length > 0) {
-                        // Display posts
-                        response.data.posts.forEach(post => {
-                            const postElement = createPostElement(post);
-                            postsGrid.appendChild(postElement);
+                    apiService.posts.getUserPosts(userId)
+                        .then(response => {
+                            // Hide loading state
+                            postsLoading.style.display = 'none';
+                            
+                            if (response.data && response.data.posts && response.data.posts.length > 0) {
+                                // Display posts
+                                response.data.posts.forEach(post => {
+                                    const postElement = createPostElement(post);
+                                    postsGrid.appendChild(postElement);
+                                });
+                            } else {
+                                // Show empty state
+                                postsEmpty.style.display = 'block';
+                            }
+                        })
+                        .catch(error => {
+                            // Show error state
+                            postsLoading.style.display = 'none';
+                            postsError.style.display = 'block';
+                            
+                            // Hiển thị thông báo lỗi cụ thể trong giao diện
+                            const errorMessage = document.querySelector('.posts-error p');
+                            if (errorMessage) {
+                                errorMessage.textContent = error.message || 'Đã xảy ra lỗi khi tải bài viết. Vui lòng thử lại sau.';
+                            }
+                            
+                            console.error('Failed to load user posts:', error);
+                            
+                            // Hiển thị nút tải lại rõ ràng hơn
+                            const retryBtn = document.querySelector('.retry-btn');
+                            if (retryBtn) {
+                                retryBtn.style.display = 'block';
+                                retryBtn.textContent = 'Thử lại';
+                            }
                         });
-                    } else {
-                        // Show empty state
-                        postsEmpty.style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    // Show error state
-                    postsLoading.style.display = 'none';
-                    postsError.style.display = 'block';
-                    console.error('Failed to load posts:', error);
-                });
+                } else {
+                    // If viewing our own profile, use the optimized getMyPosts method
+                    apiService.posts.getMyPosts()
+                        .then(response => {
+                            // Hide loading state
+                            postsLoading.style.display = 'none';
+                            
+                            console.log('My posts response:', response);
+                            
+                            if (response.data && response.data.posts && response.data.posts.length > 0) {
+                                // Display my posts directly
+                                response.data.posts.forEach(post => {
+                                    const postElement = createPostElement(post);
+                                    postsGrid.appendChild(postElement);
+                                });
+                            } else {
+                                // Show empty state
+                                postsEmpty.style.display = 'block';
+                            }
+                        })
+                        .catch(error => {
+                            // Show error state
+                            postsLoading.style.display = 'none';
+                            postsError.style.display = 'block';
+                            
+                            // Hiển thị thông báo lỗi cụ thể trong giao diện
+                            const errorMessage = document.querySelector('.posts-error p');
+                            if (errorMessage) {
+                                errorMessage.textContent = error.message || 'Đã xảy ra lỗi khi tải bài viết. Vui lòng thử lại sau.';
+                            }
+                            
+                            console.error('Failed to load my posts:', error);
+                            
+                            // Hiển thị nút tải lại rõ ràng hơn
+                            const retryBtn = document.querySelector('.retry-btn');
+                            if (retryBtn) {
+                                retryBtn.style.display = 'block';
+                                retryBtn.textContent = 'Thử lại';
+                            }
+                        });
+                }
             }
             
             // Function to create post element

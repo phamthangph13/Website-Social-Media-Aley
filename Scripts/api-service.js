@@ -432,6 +432,53 @@ const postService = {
     },
     
     /**
+     * Lấy bài viết của người dùng đang đăng nhập
+     * @param {number} page - Số trang
+     * @param {number} limit - Số lượng bài viết mỗi trang
+     * @returns {Promise<Object>} - Danh sách bài viết của người dùng đang đăng nhập
+     */
+    getMyPosts: function(page = 1, limit = 10) {
+        const token = localStorage.getItem('aley_token');
+        if (!token) {
+            return Promise.reject({ message: 'User not authenticated' });
+        }
+        
+        // Bỏ qua việc thử API "/posts/me", đi thẳng đến phương pháp lọc feed
+        return this.getFeed(page, limit)
+            .then(feedResponse => {
+                if (feedResponse.data && feedResponse.data.posts) {
+                    // Lấy thông tin người dùng hiện tại để lọc feed
+                    return fetch(`${this.baseUrl}/users/me`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        }
+                    })
+                    .then(userResponse => this._handleApiResponse(userResponse))
+                    .then(userData => {
+                        // Lọc feed để chỉ lấy bài viết của người dùng hiện tại
+                        const filteredPosts = feedResponse.data.posts.filter(post => 
+                            post.author && 
+                            (post.author.email === userData.email || 
+                             post.author.name === userData.fullName)
+                        );
+                        
+                        // Tạo đối tượng phản hồi với định dạng API
+                        return {
+                            success: true,
+                            data: {
+                                posts: filteredPosts,
+                                total: filteredPosts.length,
+                                page: page,
+                                limit: limit
+                            }
+                        };
+                    });
+                }
+                return feedResponse;
+            });
+    },
+    
+    /**
      * Thích hoặc bỏ thích bài viết
      * @param {string} postId - ID của bài viết
      * @returns {Promise<Object>} - Thông tin về trạng thái thích
