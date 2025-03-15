@@ -72,7 +72,19 @@ function updateSidebarUserProfile(userData) {
     const avatarElement = document.querySelector('.sidebar .user-profile .avatar img');
     if (avatarElement) {
         const defaultAvatar = 'https://i.pravatar.cc/150?img=12'; // Default fallback avatar
-        avatarElement.src = userData.avatar || defaultAvatar;
+        
+        if (userData.avatar) {
+            // Kiểm tra nếu avatar là URL (bắt đầu bằng http://, https://, hoặc blob:)
+            if (userData.avatar.startsWith('http://') || userData.avatar.startsWith('https://') || userData.avatar.startsWith('blob:')) {
+                avatarElement.src = userData.avatar;
+            } else {
+                // Nếu không phải URL, giả định đây là image_id và tạo URL đến API
+                avatarElement.src = `${AleyAPI.baseUrl}/users/image/${userData.avatar}`;
+            }
+        } else {
+            avatarElement.src = defaultAvatar;
+        }
+        
         avatarElement.alt = `${userData.fullName}'s avatar`;
     }
     
