@@ -240,7 +240,7 @@ class PostLoader {
         const loginBtn = noPostsElement.querySelector('.login-prompt-btn');
         if (loginBtn) {
             loginBtn.addEventListener('click', () => {
-                window.location.href = '/index.html?redirect=' + encodeURIComponent(window.location.href);
+                window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/index.html?redirect=' + encodeURIComponent(window.location.href);
             });
         }
     }
