@@ -14,6 +14,45 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load posts from API
     postLoader.loadPosts();
     
+    // Thêm nút tải lại bài viết cho người dùng
+    addReloadButton();
+    
+    // Hàm thêm nút tải lại bài viết
+    function addReloadButton() {
+        const reloadButton = document.createElement('button');
+        reloadButton.className = 'reload-feed-btn';
+        reloadButton.innerHTML = '<i class="fas fa-sync-alt"></i> Tải lại bài viết';
+        reloadButton.style.margin = '20px auto';
+        reloadButton.style.display = 'block';
+        reloadButton.style.backgroundColor = '#4a76a8';
+        reloadButton.style.color = 'white';
+        reloadButton.style.border = 'none';
+        reloadButton.style.borderRadius = '20px';
+        reloadButton.style.padding = '10px 20px';
+        reloadButton.style.cursor = 'pointer';
+        reloadButton.style.fontWeight = 'bold';
+        reloadButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+        
+        reloadButton.addEventListener('click', function() {
+            // Hiển thị trạng thái quay của biểu tượng
+            const icon = this.querySelector('i');
+            icon.classList.add('fa-spin');
+            this.disabled = true;
+            
+            // Tải lại các bài viết
+            postLoader.loadPosts();
+            
+            // Sau 2 giây, khôi phục nút
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                this.disabled = false;
+            }, 2000);
+        });
+        
+        // Chèn nút vào phần tử .feed, sau phần tử .feed-loading
+        feedElement.insertBefore(reloadButton, loadingElement.nextSibling);
+    }
+    
     // Make sure friend request buttons are set up
     setTimeout(() => {
         if (typeof setupFriendRequestButtons === 'function') {

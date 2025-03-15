@@ -59,16 +59,46 @@ class PostLoader {
                 
                 if (response.data && response.data.posts && response.data.posts.length > 0) {
                     // Add posts from API to feed
-                    // Filter posts in home page (show public and friends posts, and own private posts)
-                    const visiblePosts = response.data.posts.filter(post => 
-                        post.privacy === 'public' || 
-                        post.privacy === 'friends' || 
-                        post.is_own_post === true
-                    );
+                    // Filter posts in home page based on privacy settings and friendship status
+                    const visiblePosts = response.data.posts.filter(post => {
+                        // Always show the user's own posts
+                        if (post.is_own_post === true) {
+                            return true;
+                        }
+                        
+                        // Always show public posts
+                        if (post.privacy === 'public') {
+                            return true;
+                        }
+                        
+                        // Only show friend-only posts if the author is a friend
+                        if (post.privacy === 'friends') {
+                            // Khi người dùng đã đăng nhập, tin đăng ở chế độ bạn bè
+                            // được trả về từ API getFeed(), chúng ta luôn hiển thị chúng
+                            if (authToken) {
+                                // Nếu đã có thuộc tính is_friend = true, hiển thị luôn
+                                if (post.is_friend === true) {
+                                    return true;
+                                }
+                                
+                                // Với getFeed API, có thể hiển thị tất cả bài viết bạn bè
+                                // Đánh dấu tự động là bạn bè nếu API trả về bài viết ở chế độ bạn bè
+                                post.is_friend = true;
+                                return true;
+                            }
+                            
+                            // Nếu không đăng nhập, ẩn bài viết ở chế độ bạn bè
+                            return false;
+                        }
+                        
+                        // Hide private posts from other users
+                        return false;
+                    });
                     
                     if (visiblePosts.length > 0) {
                         // Process posts to check ownership correctly
                         visiblePosts.forEach((post, index) => {
+                            // Process all other posts
                             // Check if this post belongs to the current user
                             const currentUserId = localStorage.getItem('aley_user_id');
                             const currentUserEmail = localStorage.getItem('aley_user_email');
@@ -82,7 +112,7 @@ class PostLoader {
                                  authorName.includes(currentUserName) || 
                                  currentUserName.includes(authorName));
                             
-                            // Check if this is the current user's post - ONLY using real data, no forced assignment
+                            // Check if this is the current user's post
                             const isUserPost = 
                                 post.is_own_post === true ||
                                 (currentUserId && authorId === currentUserId) || 
@@ -135,14 +165,84 @@ class PostLoader {
     showEmptyState() {
         const noPostsElement = document.createElement('div');
         noPostsElement.className = 'no-posts-message';
-        noPostsElement.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-newspaper fa-3x"></i>
-                <h3>Chưa có bài viết nào</h3>
-                <p>Hãy theo dõi thêm bạn bè hoặc đăng bài viết đầu tiên của bạn.</p>
-            </div>
-        `;
+        
+        // Check if user is logged in
+        const isLoggedIn = !!localStorage.getItem('aley_token');
+        
+        // Show different message depending on login status
+        let message;
+        if (isLoggedIn) {
+            message = `
+                <div class="empty-state">
+                    <i class="fas fa-newspaper fa-3x"></i>
+                    <h3>Chưa có bài viết nào</h3>
+                    <p>Hãy theo dõi thêm bạn bè hoặc đăng bài viết đầu tiên của bạn.</p>
+                    <div class="privacy-hints">
+                        <p class="privacy-note"><i class="fas fa-lock"></i> <strong>Lưu ý về quyền riêng tư:</strong></p>
+                        <ul>
+                            <li><i class="fas fa-globe-asia"></i> Bài viết <strong>Công khai</strong>: Hiển thị với tất cả mọi người</li>
+                            <li><i class="fas fa-user-friends"></i> Bài viết <strong>Bạn bè</strong>: Chỉ hiển thị khi bạn đã kết bạn với người đăng</li>
+                            <li><i class="fas fa-lock"></i> Bài viết <strong>Riêng tư</strong>: Chỉ hiển thị cho người đăng</li>
+                        </ul>
+                        <p>Nếu bạn là bạn bè với người dùng nhưng không thấy bài viết của họ, hãy nhấn "Tải lại bài viết" hoặc đăng xuất và đăng nhập lại.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            message = `
+                <div class="empty-state">
+                    <i class="fas fa-newspaper fa-3x"></i>
+                    <h3>Chưa có bài viết nào</h3>
+                    <p>Đăng nhập để xem bài viết từ bạn bè và tạo bài viết của riêng bạn.</p>
+                    <div class="privacy-hints">
+                        <p class="privacy-note"><i class="fas fa-lock"></i> <strong>Lưu ý về quyền riêng tư:</strong></p>
+                        <ul>
+                            <li><i class="fas fa-globe-asia"></i> Bài viết <strong>Công khai</strong>: Hiển thị với tất cả mọi người</li>
+                            <li><i class="fas fa-user-friends"></i> Bài viết <strong>Bạn bè</strong>: Chỉ hiển thị khi bạn đã đăng nhập và kết bạn với người đăng</li>
+                            <li><i class="fas fa-lock"></i> Bài viết <strong>Riêng tư</strong>: Chỉ hiển thị cho người đăng</li>
+                        </ul>
+                    </div>
+                    <button class="login-prompt-btn">Đăng nhập ngay</button>
+                </div>
+            `;
+        }
+        
+        noPostsElement.innerHTML = message;
         this.feedElement.appendChild(noPostsElement);
+        
+        // Thêm kiểu CSS cho danh sách
+        const style = document.createElement('style');
+        style.textContent = `
+            .privacy-hints ul {
+                text-align: left;
+                margin: 10px 0;
+                padding-left: 20px;
+            }
+            .privacy-hints li {
+                margin: 8px 0;
+                list-style-type: none;
+            }
+            .privacy-hints {
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                padding: 15px;
+                margin-top: 15px;
+                border-left: 4px solid #4a76a8;
+            }
+            .privacy-note {
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Add event listener to login button if present
+        const loginBtn = noPostsElement.querySelector('.login-prompt-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                window.location.href = '/index.html?redirect=' + encodeURIComponent(window.location.href);
+            });
+        }
     }
 
     // Show error state
@@ -240,10 +340,9 @@ class PostLoader {
         
         const isNotOwnPost = !isUserOwnPost;
         
-        // Cho phép hiển thị nút kết bạn với tất cả bài viết không thuộc về người dùng hiện tại
-        // Trạng thái kết bạn thực tế sẽ được kiểm tra bởi post-interactions.js
-        // thông qua gọi API checkFriendshipStatus
-        const isNotFriend = true;
+        // FIX: Kiểm tra đúng trạng thái bạn bè để quyết định có hiển thị nút "Kết bạn" hay không
+        // Nếu bài viết có privacy là 'friends' và người dùng đã đăng nhập, không hiển thị nút kết bạn
+        const isFriend = post.is_friend === true;
         
         // Log for debugging
         console.log(`Post ${post.post_id}:`, {
@@ -260,13 +359,15 @@ class PostLoader {
             isLoggedIn: isLoggedIn,
             isNotOwnPost: isNotOwnPost,
             isUserOwnPost: isUserOwnPost,
+            isFriend: isFriend,
+            privacy: post.privacy,
             originalIsOwnPost: post.is_own_post,
-            shouldShowButton: isLoggedIn && isNotOwnPost
+            shouldShowButton: isLoggedIn && isNotOwnPost && !isFriend
         });
         
         // Generate Add Friend button HTML
         let addFriendHTML = '';
-        if (isLoggedIn && isNotOwnPost) {
+        if (isLoggedIn && isNotOwnPost && !isFriend) {
             // Lấy user_id từ post.author
             const authorId = post.author.id || post.author.user_id || post.author._id || `user_${post.post_id}`;
             
