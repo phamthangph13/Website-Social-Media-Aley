@@ -500,7 +500,7 @@
 .privacy-btn {
     display: flex;
     align-items: center;
-    background-color: #f0f2f5;
+    background-color: var(--secondary-color, #f0f2f5);
     border: none;
     border-radius: 20px;
     padding: 6px 12px;
@@ -512,7 +512,7 @@
 }
 
 .privacy-btn:hover {
-    background-color: #e4e6e9;
+    background-color: var(--hover-color, #e4e6e9);
 }
 
 .privacy-btn i:first-child {
@@ -540,12 +540,13 @@
     left: 0;
     margin-bottom: 5px;
     width: 260px;
-    background-color: white;
+    background-color: var(--card-bg, white);
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-md, 0 2px 10px rgba(0, 0, 0, 0.2));
     padding: 8px 0;
     z-index: 9999;
     display: none;
+    border: 1px solid var(--border-color, transparent);
 }
 
 .privacy-dropdown.active {
@@ -572,7 +573,7 @@
 }
 
 .privacy-option:hover {
-    background-color: #f0f2f5;
+    background-color: var(--hover-color, #f0f2f5);
 }
 
 .privacy-option i {
@@ -580,10 +581,12 @@
     margin-right: 12px;
     width: 20px;
     text-align: center;
+    color: var(--primary-color, #7f68dc);
 }
 
 .privacy-option.selected {
-    background-color: rgba(127, 104, 220, 0.1);
+    background-color: rgba(var(--primary-rgb), 0.2);
+    color: var(--text-color);
 }
 
 .privacy-option.selected::after {
@@ -592,7 +595,7 @@
     font-weight: 900;
     position: absolute;
     right: 15px;
-    color: var(--primary-color);
+    color: var(--primary-color, #7f68dc);
 }
 
 .post-actions {
@@ -608,11 +611,13 @@
 }
 
 .privacy-name {
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 2px;
+    color: var(--text-color);
 }
 
 .privacy-desc {
-    font-size: 0.8rem;
-    color: var(--text-light);
+    font-size: 0.85rem;
+    opacity: 0.8;
+    color: var(--text-light, #718096);
 } 
