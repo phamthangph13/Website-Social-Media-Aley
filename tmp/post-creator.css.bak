@@ -494,7 +494,6 @@
 .privacy-selector {
     position: relative;
     margin-right: 10px;
-    z-index: 100;
 }
 
 .privacy-btn {
@@ -508,7 +507,7 @@
     color: var(--text-color);
     cursor: pointer;
     transition: background-color 0.2s;
-    user-select: none;
+    user-select: none; /* Prevent text selection */
 }
 
 .privacy-btn:hover {
@@ -522,50 +521,42 @@
 .privacy-btn i:last-child {
     margin-left: 6px;
     font-size: 0.8rem;
-    transition: transform 0.2s;
 }
 
-.privacy-btn i:last-child {
-    transition: transform 0.2s;
-}
-
-.privacy-dropdown.active + button i:last-child {
-    transform: rotate(180deg);
-}
-
+/* Popup style dropdown */
 .privacy-dropdown {
-    position: absolute;
-    top: auto;
-    bottom: 100%;
-    left: 0;
-    margin-bottom: 5px;
+    position: fixed;
     width: 260px;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     padding: 8px 0;
-    z-index: 9999;
+    z-index: 10000;
     display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.privacy-dropdown:before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: -1;
 }
 
 .privacy-dropdown.active {
     display: block;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.privacy-dropdown::before {
-    display: none;
 }
 
 .privacy-option {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
+    padding: 12px 15px;
     cursor: pointer;
     transition: background-color 0.2s;
     position: relative;
@@ -587,19 +578,12 @@
 }
 
 .privacy-option.selected::after {
-    content: "\f00c";
+    content: "\f00c"; /* FontAwesome checkmark */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     position: absolute;
     right: 15px;
     color: var(--primary-color);
-}
-
-.post-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 10px;
 }
 
 .privacy-details {
@@ -615,4 +599,11 @@
 .privacy-desc {
     font-size: 0.8rem;
     color: var(--text-light);
+}
+
+.post-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
 } 

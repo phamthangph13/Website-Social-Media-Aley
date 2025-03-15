@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const emojiBtn = document.querySelector('.attachment-btn:nth-child(2)');
     const checkInBtn = document.querySelector('.attachment-btn:nth-child(3)');
     const postBtn = document.querySelector('.post-btn');
+    const privacyBtn = document.querySelector('.privacy-btn');
+    const privacyDropdown = document.querySelector('.privacy-dropdown');
+    const privacyOptions = document.querySelectorAll('.privacy-option');
     
     // State variables
     let postData = {
@@ -41,6 +44,20 @@ document.addEventListener('DOMContentLoaded', function() {
     locationContainer.className = 'location-display';
     document.querySelector('.post-attachments').insertAdjacentElement('beforebegin', locationContainer);
     
+    // Create a div for displaying formatted content with colored hashtags
+    const formattedDisplay = document.createElement('div');
+    formattedDisplay.className = 'formatted-content';
+    formattedDisplay.style.display = 'none'; // Initially hidden
+    
+    // Insert the formatted display after the textarea
+    postTextarea.insertAdjacentElement('afterend', formattedDisplay);
+    
+    // Initialize privacy selector with default value
+    const selectPublicOption = document.querySelector('.privacy-option[data-privacy="public"]');
+    if (selectPublicOption) {
+        selectPublicOption.classList.add('selected');
+    }
+    
     // Event Listeners
     postTextarea.addEventListener('input', updatePostContent);
     imageBtn.addEventListener('click', handleImageButtonClick);
@@ -49,9 +66,69 @@ document.addEventListener('DOMContentLoaded', function() {
     checkInBtn.addEventListener('click', handleCheckInButtonClick);
     postBtn.addEventListener('click', handlePostSubmission);
     
+    // Simple privacy selector toggle
+    if (privacyBtn) {
+        privacyBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            privacyDropdown.classList.toggle('active');
+        };
+    }
+    
+    // Add direct click events to privacy options
+    document.querySelectorAll('.privacy-option').forEach(option => {
+        option.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Get privacy value from data attribute
+            const privacy = this.getAttribute('data-privacy');
+            
+            // Update postData
+            postData.privacy = privacy;
+            
+            // Update UI
+            document.querySelectorAll('.privacy-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            this.classList.add('selected');
+            
+            // Update button text and icon
+            const privacyText = privacyBtn.querySelector('.privacy-text');
+            const privacyIcon = privacyBtn.querySelector('i:first-child');
+            
+            if (privacy === 'public') {
+                privacyText.textContent = 'Công khai';
+                privacyIcon.className = 'fas fa-globe';
+            } else if (privacy === 'friends') {
+                privacyText.textContent = 'Bạn bè';
+                privacyIcon.className = 'fas fa-user-friends';
+            } else if (privacy === 'private') {
+                privacyText.textContent = 'Chỉ mình tôi';
+                privacyIcon.className = 'fas fa-lock';
+            }
+            
+            // Close dropdown
+            privacyDropdown.classList.remove('active');
+        };
+    });
+    
+    // Stop propagation inside dropdown
+    privacyDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', function(e) {
+        if (privacyDropdown.classList.contains('active') && !privacyDropdown.contains(e.target) && !privacyBtn.contains(e.target)) {
+            privacyDropdown.classList.remove('active');
+        }
+    });
+    
     // Event Handlers
     function updatePostContent() {
         postData.content = postTextarea.value.trim();
+        updateFormattedDisplay();
         validatePostButton();
     }
     
@@ -702,6 +779,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset preview container classes
         previewContainer.classList.remove('single-attachment', 'two-attachments');
         
+        // Reset privacy selector to public
+        if (privacyBtn) {
+            const privacyText = privacyBtn.querySelector('.privacy-text');
+            const privacyIcon = privacyBtn.querySelector('i:first-child');
+            
+            if (privacyText && privacyIcon) {
+                privacyText.textContent = 'Công khai';
+                privacyIcon.className = 'fas fa-globe';
+                
+                // Remove selected class from all options
+                privacyOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Mark the public option as selected
+                const publicOption = document.querySelector('.privacy-option[data-privacy="public"]');
+                if (publicOption) {
+                    publicOption.classList.add('selected');
+                }
+            }
+        }
+        
         postData = {
             content: '',
             attachments: [],
@@ -724,4 +821,110 @@ document.addEventListener('DOMContentLoaded', function() {
             setupLikeButton(likeButton, postId);
         }
     });
+    
+    // Function to update the formatted display with colored hashtags
+    function updateFormattedDisplay() {
+        const text = postTextarea.value;
+        
+        // If text is empty, hide the formatted display
+        if (!text) {
+            formattedDisplay.style.display = 'none';
+            return;
+        }
+        
+        // Show the formatted display
+        formattedDisplay.style.display = 'block';
+        
+        // Generate formatted HTML with colored hashtags
+        const formattedHTML = formatTextWithHashtags(text);
+        formattedDisplay.innerHTML = formattedHTML;
+    }
+    
+    // Function to format text with colored hashtags
+    function formatTextWithHashtags(text) {
+        // Create a temporary div element
+        const tempDiv = document.createElement('div');
+        
+        // HTML encode the text to prevent issues
+        const encodedText = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        
+        // Replace hashtags with colored spans
+        // This regex matches hashtags that are:
+        // - Preceded by a space or at beginning of text
+        // - Include letters, numbers, Vietnamese chars, and underscores
+        // - Continue until a space, punctuation, or end of string
+        let formattedText = encodedText.replace(/(^|\s)(#[\p{L}\p{N}_]+)/gu, function(match, p1, p2) {
+            const color = getHashtagColor(p2);
+            return p1 + `<span class="hashtag" style="color: ${color};">${p2}</span>`;
+        });
+        
+        // Convert line breaks to <br>
+        formattedText = formattedText.replace(/\n/g, '<br>');
+        
+        // Add non-hashtag text with normal color
+        formattedText = `<span class="normal-text">${formattedText}</span>`;
+        
+        return formattedText;
+    }
+    
+    // Function to generate a consistent color for each hashtag
+    function getHashtagColor(hashtag) {
+        // List of vibrant colors for hashtags
+        const colors = [
+            '#E53935', // Red
+            '#8E24AA', // Purple
+            '#1E88E5', // Blue
+            '#43A047', // Green
+            '#FFB300', // Amber
+            '#FB8C00', // Orange
+            '#00ACC1', // Cyan
+            '#3949AB', // Indigo
+            '#D81B60', // Pink
+            '#00897B'  // Teal
+        ];
+        
+        // Generate a hash code for the hashtag to get a consistent color
+        let hashCode = 0;
+        for (let i = 0; i < hashtag.length; i++) {
+            hashCode = (hashtag.charCodeAt(i) + ((hashCode << 5) - hashCode)) & 0xFFFFFFFF;
+        }
+        
+        // Use modulo to get an index in the colors array
+        const colorIndex = Math.abs(hashCode) % colors.length;
+        return colors[colorIndex];
+    }
+    
+    // Handle textarea input events for real-time hashtag highlighting
+    postTextarea.addEventListener('input', function(e) {
+        updatePostContent();
+        
+        // Position the formatted display to match the textarea
+        positionFormattedDisplay();
+    });
+    
+    // Position the formatted display to overlay with the textarea
+    function positionFormattedDisplay() {
+        // Make the formatted display match the size of the textarea
+        formattedDisplay.style.width = postTextarea.clientWidth + 'px';
+        formattedDisplay.style.height = postTextarea.clientHeight + 'px';
+    }
+    
+    // When the user focuses on the formatted display, redirect focus to the textarea
+    formattedDisplay.addEventListener('click', function() {
+        postTextarea.focus();
+    });
+    
+    // Synchronize scrolling between textarea and formatted display
+    postTextarea.addEventListener('scroll', function() {
+        formattedDisplay.scrollTop = postTextarea.scrollTop;
+    });
+    
+    // Initial position of the formatted display
+    window.addEventListener('load', positionFormattedDisplay);
+    window.addEventListener('resize', positionFormattedDisplay);
 }); 

@@ -9,6 +9,35 @@
     <link rel="stylesheet" href="Styles/post-creator.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Hashtag styles */
+        .hashtag {
+            font-weight: 600;
+            border-radius: 4px;
+            padding: 0 2px;
+            margin: 0 -2px;
+            display: inline-block;
+            position: relative;
+            animation: hashtag-pulse 2s ease-in-out infinite;
+        }
+        
+        /* Custom animation for hashtags */
+        @keyframes hashtag-pulse {
+            0% { opacity: 0.85; }
+            50% { opacity: 1; }
+            100% { opacity: 0.85; }
+        }
+        
+        /* Special styling for hashtag links */
+        a.hashtag {
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        a.hashtag:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -46,6 +75,36 @@
                         </button>
                     </div>
                     <div class="post-actions">
+                        <div class="privacy-selector">
+                            <button type="button" class="privacy-btn">
+                                <i class="fas fa-globe"></i>
+                                <span class="privacy-text">Công khai</span>
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                            <div class="privacy-dropdown">
+                                <div class="privacy-option" data-privacy="public">
+                                    <i class="fas fa-globe"></i>
+                                    <div class="privacy-details">
+                                        <span class="privacy-name">Công khai</span>
+                                        <span class="privacy-desc">Tất cả mọi người có thể xem</span>
+                                    </div>
+                                </div>
+                                <div class="privacy-option" data-privacy="friends">
+                                    <i class="fas fa-user-friends"></i>
+                                    <div class="privacy-details">
+                                        <span class="privacy-name">Bạn bè</span>
+                                        <span class="privacy-desc">Chỉ bạn bè có thể xem</span>
+                                    </div>
+                                </div>
+                                <div class="privacy-option" data-privacy="private">
+                                    <i class="fas fa-lock"></i>
+                                    <div class="privacy-details">
+                                        <span class="privacy-name">Chỉ mình tôi</span>
+                                        <span class="privacy-desc">Chỉ bạn có thể xem</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <button class="post-btn">
                             <i class="fas fa-paper-plane"></i>
                             <span>Đăng</span>
@@ -87,6 +146,7 @@
     <script src="../Scripts/sidebar-loader.js"></script>
     <script src="../Scripts/right-sidebar-loader.js"></script>
     <script src="../Scripts/page-transition.js"></script>
+    <script src="../Scripts/hashtag-formatter.js"></script>
     <script src="../Scripts/post-creator.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -434,6 +494,11 @@
                 const postDate = new Date(post.created_at);
                 const formattedDate = postDate.toLocaleString('vi-VN');
                 
+                // Format post content with hashtag highlighting
+                const formattedContent = window.hashtagFormatter ? 
+                    window.hashtagFormatter.formatTextWithHashtags(post.content || '') : 
+                    (post.content || '');
+                
                 // Tạo HTML cho bài viết
                 postElement.innerHTML = `
                     <div class="card-header post-header">
@@ -451,7 +516,7 @@
                         </div>
                     </div>
                     <div class="card-body post-content">
-                        <p>${post.content || ''} ${emotionHTML} ${locationHTML}</p>
+                        <p>${formattedContent} ${emotionHTML} ${locationHTML}</p>
                         ${mediaHTML}
                     </div>
                     <div class="card-footer post-footer">

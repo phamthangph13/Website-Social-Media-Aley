@@ -8,6 +8,25 @@
     <link rel="stylesheet" href="Styles/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Hashtag styles */
+        .hashtag {
+            font-weight: 600;
+            border-radius: 4px;
+            padding: 0 2px;
+            margin: 0 -2px;
+            display: inline-block;
+            position: relative;
+            animation: hashtag-pulse 2s ease-in-out infinite;
+        }
+        
+        /* Custom animation for hashtags */
+        @keyframes hashtag-pulse {
+            0% { opacity: 0.85; }
+            50% { opacity: 1; }
+            100% { opacity: 0.85; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -157,6 +176,7 @@
     <script src="../Scripts/right-sidebar-loader.js"></script>
     <script src="../Scripts/page-transition.js"></script>
     <script src="../Scripts/profile-handler.js"></script>
+    <script src="../Scripts/hashtag-formatter.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Element references
@@ -347,6 +367,11 @@
                 const postDate = new Date(post.created_at);
                 const formattedDate = postDate.toLocaleString('vi-VN');
                 
+                // Format post content with hashtag highlighting
+                const formattedContent = window.hashtagFormatter ? 
+                    window.hashtagFormatter.formatTextWithHashtags(post.content || '') : 
+                    (post.content || '');
+                
                 // Create post HTML structure
                 postElement.innerHTML = `
                     <div class="post-header">
@@ -362,7 +387,7 @@
                         </button>
                     </div>
                     <div class="post-content">
-                        <p>${post.content || ''} ${emotionHTML} ${locationHTML}</p>
+                        <p>${formattedContent} ${emotionHTML} ${locationHTML}</p>
                         ${mediaHTML}
                     </div>
                     <div class="post-actions">
