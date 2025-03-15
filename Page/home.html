@@ -6,6 +6,7 @@
     <title>Aley - Trang chủ</title>
     <link rel="stylesheet" href="Styles/global.css">
     <link rel="stylesheet" href="Styles/home.css">
+    <link rel="stylesheet" href="Styles/post-creator.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
@@ -24,7 +25,7 @@
                 <div class="card-body">
                     <div class="user-input">
                         <div class="avatar">
-                            <img src="https://i.pravatar.cc/150?img=12" alt="Avatar">
+                            <img src="../assets/images/default-avatar.png" alt="Avatar" data-default="true" onerror="this.src='https://i.pravatar.cc/150?img=12';">
                         </div>
                         <div class="post-input">
                             <textarea placeholder="Bạn đang nghĩ gì?"></textarea>
@@ -55,175 +56,29 @@
 
             <!-- Bảng tin -->
             <div class="feed">
-                <!-- Bài viết 1 -->
-                <div class="post-card card animate__animated animate__fadeIn">
-                    <div class="card-header post-header">
-                        <div class="post-author">
-                            <div class="avatar">
-                                <img src="https://i.pravatar.cc/150?img=32" alt="Avatar">
-                            </div>
-                            <div class="author-info">
-                                <h4>Trần Thị B</h4>
-                                <p>2 giờ trước</p>
-                            </div>
-                        </div>
-                        <div class="post-options">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </div>
-                    </div>
-                    <div class="card-body post-content">
-                        <p>Hôm nay thời tiết thật đẹp! 🌞 #cuoituan #hanoi</p>
-                        <div class="post-media">
-                            <img src="https://source.unsplash.com/random/600x400/?hanoi,sunny" alt="Hà Nội ngày nắng">
-                        </div>
-                    </div>
-                    <div class="card-footer post-footer">
-                        <div class="post-stats">
-                            <div class="likes">
-                                <i class="fas fa-heart"></i>
-                                <span>142</span>
-                            </div>
-                            <div class="comments">
-                                <i class="fas fa-comment"></i>
-                                <span>24</span>
-                            </div>
-                            <div class="shares">
-                                <i class="fas fa-share"></i>
-                                <span>8</span>
-                            </div>
-                        </div>
-                        <div class="post-actions">
-                            <button class="action-btn">
-                                <i class="far fa-heart"></i>
-                                <span>Thích</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="far fa-comment"></i>
-                                <span>Bình luận</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="far fa-share-square"></i>
-                                <span>Chia sẻ</span>
-                            </button>
-                        </div>
-                    </div>
+                <!-- Khu vực hiển thị trạng thái loading -->
+                <div class="feed-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Đang tải bài viết...</p>
                 </div>
-
-                <!-- Bài viết 2 -->
-                <div class="post-card card animate__animated animate__fadeIn">
-                    <div class="card-header post-header">
-                        <div class="post-author">
-                            <div class="avatar">
-                                <img src="https://i.pravatar.cc/150?img=68" alt="Avatar">
-                            </div>
-                            <div class="author-info">
-                                <h4>Lê Văn C</h4>
-                                <p>5 giờ trước</p>
-                            </div>
-                        </div>
-                        <div class="post-options">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </div>
-                    </div>
-                    <div class="card-body post-content">
-                        <p>Vừa hoàn thành dự án mới! Cảm ơn team đã đồng hành cùng tôi suốt thời gian qua. 👨‍💻👩‍💻 #teamwork #project</p>
-                        <div class="post-media grid-media">
-                            <img src="https://source.unsplash.com/random/500x300/?office,team" alt="Team làm việc">
-                            <img src="https://source.unsplash.com/random/500x300/?celebration" alt="Ăn mừng">
-                            <img src="https://source.unsplash.com/random/500x300/?project" alt="Dự án">
-                            <img src="https://source.unsplash.com/random/500x300/?success" alt="Thành công">
-                        </div>
-                    </div>
-                    <div class="card-footer post-footer">
-                        <div class="post-stats">
-                            <div class="likes">
-                                <i class="fas fa-heart"></i>
-                                <span>256</span>
-                            </div>
-                            <div class="comments">
-                                <i class="fas fa-comment"></i>
-                                <span>47</span>
-                            </div>
-                            <div class="shares">
-                                <i class="fas fa-share"></i>
-                                <span>12</span>
-                            </div>
-                        </div>
-                        <div class="post-actions">
-                            <button class="action-btn">
-                                <i class="far fa-heart"></i>
-                                <span>Thích</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="far fa-comment"></i>
-                                <span>Bình luận</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="far fa-share-square"></i>
-                                <span>Chia sẻ</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bài viết 3 -->
-                <div class="post-card card animate__animated animate__fadeIn">
-                    <div class="card-header post-header">
-                        <div class="post-author">
-                            <div class="avatar">
-                                <img src="https://i.pravatar.cc/150?img=23" alt="Avatar">
-                            </div>
-                            <div class="author-info">
-                                <h4>Phạm Thị D</h4>
-                                <p>Hôm qua lúc 20:30</p>
-                            </div>
-                        </div>
-                        <div class="post-options">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </div>
-                    </div>
-                    <div class="card-body post-content">
-                        <p>Vừa hoàn thành cuốn sách "Người giàu có nhất thành Babylon". Đây là những suy nghĩ của tôi về cuốn sách này...</p>
-                        <div class="read-more">
-                            <a href="#">Xem thêm</a>
-                        </div>
-                    </div>
-                    <div class="card-footer post-footer">
-                        <div class="post-stats">
-                            <div class="likes">
-                                <i class="fas fa-heart"></i>
-                                <span>89</span>
-                            </div>
-                            <div class="comments">
-                                <i class="fas fa-comment"></i>
-                                <span>31</span>
-                            </div>
-                            <div class="shares">
-                                <i class="fas fa-share"></i>
-                                <span>5</span>
-                            </div>
-                        </div>
-                        <div class="post-actions">
-                            <button class="action-btn">
-                                <i class="far fa-heart"></i>
-                                <span>Thích</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="far fa-comment"></i>
-                                <span>Bình luận</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="far fa-share-square"></i>
-                                <span>Chia sẻ</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                
+                <!-- Các bài viết sẽ được thêm vào từ API -->
             </div>
         </main>
 
         <!-- Phần bên phải - sẽ được load từ right-sidebar.html -->
         <div class="right-sidebar-container"></div>
+    </div>
+
+    <!-- Post loading overlay -->
+    <div class="post-loading-overlay">
+        <div class="post-loading-container">
+            <div class="post-loading-spinner"></div>
+            <div class="post-loading-progress">
+                <div class="post-loading-progress-bar"></div>
+            </div>
+            <p class="post-loading-text">Đang đăng bài viết...</p>
+        </div>
     </div>
 
     <!-- Javascript -->
@@ -232,42 +87,584 @@
     <script src="../Scripts/sidebar-loader.js"></script>
     <script src="../Scripts/right-sidebar-loader.js"></script>
     <script src="../Scripts/page-transition.js"></script>
+    <script src="../Scripts/post-creator.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Hiệu ứng cho nút thích
-            const likeButtons = document.querySelectorAll('.action-btn:nth-child(1)');
-            likeButtons.forEach(button => {
-                button.addEventListener('click', function() {
+            // Hiển thị loading state
+            const feedElement = document.querySelector('.feed');
+            const loadingElement = document.querySelector('.feed-loading');
+            const postLoadingOverlay = document.querySelector('.post-loading-overlay');
+            const postLoadingProgressBar = document.querySelector('.post-loading-progress-bar');
+            const createPostAvatar = document.querySelector('.create-post-card .avatar img');
+            
+            // Tải dữ liệu người dùng và hiển thị avatar
+            fetchUserAvatar();
+            
+            // Tải bài viết từ API
+            loadPosts();
+            
+            // Hàm lấy avatar của người dùng hiện tại
+            async function fetchUserAvatar() {
+                // Kiểm tra xem người dùng đã đăng nhập chưa
+                if (localStorage.getItem('aley_token')) {
+                    try {
+                        // Lấy thông tin người dùng hiện tại từ API
+                        const userData = await AleyAPI.User.getCurrentUser();
+                        
+                        // Cập nhật avatar trong phần đăng bài viết
+                        if (createPostAvatar && userData.avatar) {
+                            // Cập nhật avatar và xóa thuộc tính data-default
+                            createPostAvatar.src = userData.avatar;
+                            createPostAvatar.removeAttribute('data-default');
+                            
+                            // Lưu avatar vào localStorage để sử dụng nhanh trong các lần sau
+                            try {
+                                localStorage.setItem('aley_user_avatar', userData.avatar);
+                                localStorage.setItem('aley_user_name', userData.fullName || 'Người dùng Aley');
+                            } catch (e) {
+                                console.warn('Không thể lưu avatar vào localStorage:', e);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Không thể lấy thông tin người dùng:', error);
+                        
+                        // Nếu không lấy được từ API, thử lấy từ localStorage
+                        const savedAvatar = localStorage.getItem('aley_user_avatar');
+                        if (savedAvatar && createPostAvatar) {
+                            createPostAvatar.src = savedAvatar;
+                            createPostAvatar.removeAttribute('data-default');
+                        }
+                    }
+                }
+            }
+            
+            // Thiết lập sự kiện cho nút đăng bài
+            const postBtn = document.querySelector('.post-btn');
+            if (postBtn) {
+                postBtn.addEventListener('click', function() {
+                    // Lấy nội dung bài viết
+                    const postContent = document.querySelector('.post-input textarea').value;
+                    if (!postContent.trim()) {
+                        alert('Vui lòng nhập nội dung bài viết!');
+                        return;
+                    }
+                    
+                    // Hiển thị loading overlay
+                    showPostLoading();
+                    
+                    // Chuẩn bị dữ liệu bài viết
+                    const postData = {
+                        content: postContent,
+                        privacy: 'public' // Mặc định là công khai
+                    };
+                    
+                    // Giả lập tiến trình tải lên (thay bằng API thực tế)
+                    let progress = 0;
+                    const progressInterval = setInterval(() => {
+                        progress += 5;
+                        if (progress <= 100) {
+                            updateProgressBar(progress);
+                        } else {
+                            clearInterval(progressInterval);
+                            
+                            // Sau khi hoàn thành, ẩn loading và làm mới bài viết
+                            setTimeout(() => {
+                                hidePostLoading();
+                                
+                                // Thêm bài viết mới vào đầu feed nếu thành công
+                                AleyAPI.User.getCurrentUser()
+                                    .then(userData => {
+                                        // Tạo đối tượng bài viết giả lập (thường sẽ được trả về từ API)
+                                        const mockPost = {
+                                            post_id: 'temp_' + Date.now(),
+                                            content: postContent,
+                                            created_at: new Date().toISOString(),
+                                            author: {
+                                                name: userData.fullName || 'Người dùng Aley',
+                                                avatar: userData.avatar || 'https://i.pravatar.cc/150?img=12'
+                                            },
+                                            media: [],
+                                            likes_count: 0,
+                                            comments_count: 0,
+                                            shares_count: 0,
+                                            privacy: 'public',
+                                            is_liked: false
+                                        };
+                                        
+                                        // Tạo phần tử bài viết và thêm vào đầu feed
+                                        const postElement = createPostElement(mockPost);
+                                        feedElement.insertBefore(postElement, feedElement.firstChild);
+                                        
+                                        // Xóa nội dung trong textarea sau khi đăng
+                                        document.querySelector('.post-input textarea').value = '';
+                                    })
+                                    .catch(error => {
+                                        console.error('Không thể lấy thông tin người dùng:', error);
+                                        // Xóa nội dung trong textarea sau khi đăng
+                                        document.querySelector('.post-input textarea').value = '';
+                                    });
+                            }, 500);
+                        }
+                    }, 200);
+                    
+                    // Trong thực tế, bạn sẽ gọi API và xử lý phản hồi tại đây
+                    // apiService.posts.createPost(postData, updateProgressBar)
+                    //     .then(response => {
+                    //         hidePostLoading();
+                    //         document.querySelector('.post-input textarea').value = '';
+                    //         // Thêm bài viết mới vào đầu feed
+                    //         const postElement = createPostElement(response.data);
+                    //         feedElement.insertBefore(postElement, feedElement.firstChild);
+                    //     })
+                    //     .catch(error => {
+                    //         hidePostLoading();
+                    //         alert('Đăng bài viết thất bại: ' + error.message);
+                    //     });
+                });
+            }
+            
+            // Hàm hiển thị loading khi đăng bài
+            function showPostLoading() {
+                postLoadingOverlay.classList.add('active');
+                updateProgressBar(0);
+            }
+            
+            // Hàm ẩn loading khi đăng bài
+            function hidePostLoading() {
+                postLoadingOverlay.classList.remove('active');
+            }
+            
+            // Hàm cập nhật thanh tiến trình
+            function updateProgressBar(percent) {
+                postLoadingProgressBar.style.width = percent + '%';
+            }
+            
+            // Hàm tải bài viết từ API
+            function loadPosts() {
+                // Hiển thị loading
+                if (loadingElement) {
+                    loadingElement.style.display = 'flex';
+                }
+                
+                // Kiểm tra xem user đã đăng nhập chưa
+                const authToken = localStorage.getItem('aley_token');
+                
+                // Hiển thị avatar của người dùng nếu đã đăng nhập
+                if (authToken) {
+                    // Kiểm tra xem avatar có phải là mặc định không
+                    if (createPostAvatar.hasAttribute('data-default') || createPostAvatar.src.includes('pravatar')) {
+                        // Trước tiên thử lấy từ localStorage nếu có
+                        const savedAvatar = localStorage.getItem('aley_user_avatar');
+                        if (savedAvatar) {
+                            createPostAvatar.src = savedAvatar;
+                            createPostAvatar.removeAttribute('data-default');
+                        } else {
+                            // Lấy thông tin user để cập nhật avatar
+                            AleyAPI.User.getCurrentUser()
+                                .then(userData => {
+                                    if (userData.avatar) {
+                                        createPostAvatar.src = userData.avatar;
+                                        createPostAvatar.removeAttribute('data-default');
+                                        
+                                        // Lưu vào localStorage
+                                        try {
+                                            localStorage.setItem('aley_user_avatar', userData.avatar);
+                                            localStorage.setItem('aley_user_name', userData.fullName || 'Người dùng Aley');
+                                        } catch (e) {
+                                            console.warn('Không thể lưu avatar vào localStorage:', e);
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Không thể lấy thông tin người dùng:', error);
+                                });
+                        }
+                    }
+                } else {
+                    // Ẩn phần tạo bài viết nếu chưa đăng nhập
+                    const createPostCard = document.querySelector('.create-post-card');
+                    if (createPostCard) {
+                        createPostCard.style.display = 'none';
+                    }
+                }
+                
+                // Xác định function để gọi API (getFeed nếu đã đăng nhập, getPosts nếu chưa)
+                const apiFunction = authToken ? 
+                    apiService.posts.getFeed() : 
+                    apiService.posts.getPosts();
+                
+                // Gọi API và xử lý kết quả
+                apiFunction
+                    .then(response => {
+                        // Ẩn loading
+                        if (loadingElement) {
+                            loadingElement.style.display = 'none';
+                        }
+                        
+                        // Xóa nội dung hiện tại trong feed
+                        feedElement.innerHTML = '';
+                        feedElement.appendChild(loadingElement);
+                        
+                        if (response.data && response.data.posts && response.data.posts.length > 0) {
+                            // Thêm các bài viết từ API vào feed
+                            response.data.posts.forEach(post => {
+                                const postElement = createPostElement(post);
+                                feedElement.appendChild(postElement);
+                            });
+                        } else {
+                            // Hiển thị thông báo không có bài viết
+                            const noPostsElement = document.createElement('div');
+                            noPostsElement.className = 'no-posts-message';
+                            noPostsElement.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-newspaper fa-3x"></i>
+                                    <h3>Chưa có bài viết nào</h3>
+                                    <p>Hãy theo dõi thêm bạn bè hoặc đăng bài viết đầu tiên của bạn.</p>
+                                </div>
+                            `;
+                            feedElement.appendChild(noPostsElement);
+                        }
+                    })
+                    .catch(error => {
+                        // Ẩn loading
+                        if (loadingElement) {
+                            loadingElement.style.display = 'none';
+                        }
+                        
+                        // Hiển thị thông báo lỗi
+                        console.error('Không thể tải bài viết:', error);
+                        const errorElement = document.createElement('div');
+                        errorElement.className = 'error-message';
+                        errorElement.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle fa-3x"></i>
+                                <h3>Không thể tải bài viết</h3>
+                                <p>Đã xảy ra lỗi khi tải bài viết. Vui lòng thử lại sau.</p>
+                                <button class="retry-btn">Thử lại</button>
+                            </div>
+                        `;
+                        feedElement.appendChild(errorElement);
+                        
+                        // Thêm event listener cho nút thử lại
+                        const retryButton = errorElement.querySelector('.retry-btn');
+                        if (retryButton) {
+                            retryButton.addEventListener('click', function() {
+                                loadPosts();
+                            });
+                        }
+                    });
+            }
+            
+            // Hàm tạo phần tử bài viết từ dữ liệu
+            function createPostElement(post) {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-card card animate__animated animate__fadeIn';
+                postElement.dataset.postId = post.post_id;
+                
+                // Tạo HTML cho phần media
+                let mediaHTML = '';
+                if (post.media && post.media.length > 0) {
+                    const mediaCount = post.media.length;
+                    
+                    if (mediaCount === 1) {
+                        // Nếu chỉ có 1 media file
+                        const media = post.media[0];
+                        if (media.type === 'image') {
+                            mediaHTML = `<div class="post-media"><img src="${media.url}" alt=""></div>`;
+                        } else if (media.type === 'video') {
+                            mediaHTML = `<div class="post-media"><video src="${media.url}" controls poster="${media.thumbnail}"></video></div>`;
+                        }
+                    } else {
+                        // Nếu có nhiều media files
+                        mediaHTML = `<div class="post-media grid-media count-${Math.min(mediaCount, 6)}">`;
+                        
+                        // Giới hạn hiển thị tối đa 6 files
+                        const displayCount = Math.min(mediaCount, 6);
+                        for (let i = 0; i < displayCount; i++) {
+                            const media = post.media[i];
+                            if (media.type === 'image') {
+                                // Nếu là ảnh cuối và còn nhiều ảnh khác chưa hiển thị
+                                if (i === displayCount - 1 && mediaCount > displayCount) {
+                                    mediaHTML += `
+                                        <div class="media-item">
+                                            <img src="${media.url}" alt="">
+                                            <div class="more-media-overlay">+${mediaCount - displayCount + 1}</div>
+                                        </div>
+                                    `;
+                                } else {
+                                    mediaHTML += `<img src="${media.url}" alt="">`;
+                                }
+                            } else if (media.type === 'video') {
+                                // Nếu là video cuối và còn nhiều files khác chưa hiển thị
+                                if (i === displayCount - 1 && mediaCount > displayCount) {
+                                    mediaHTML += `
+                                        <div class="video-container">
+                                            <video src="${media.url}" poster="${media.thumbnail}"></video>
+                                            <div class="video-play-button"><i class="fas fa-play"></i></div>
+                                            <div class="more-media-overlay">+${mediaCount - displayCount + 1}</div>
+                                        </div>
+                                    `;
+                                } else {
+                                    mediaHTML += `
+                                        <div class="video-container">
+                                            <video src="${media.url}" poster="${media.thumbnail}"></video>
+                                            <div class="video-play-button"><i class="fas fa-play"></i></div>
+                                        </div>
+                                    `;
+                                }
+                            }
+                        }
+                        mediaHTML += '</div>';
+                    }
+                }
+                
+                // Tạo HTML cho phần cảm xúc
+                let emotionHTML = '';
+                if (post.emotion) {
+                    emotionHTML = `<span class="post-emotion">- đang cảm thấy ${post.emotion.emoji} ${post.emotion.name}</span>`;
+                }
+                
+                // Tạo HTML cho phần vị trí
+                let locationHTML = '';
+                if (post.location) {
+                    locationHTML = `<span class="post-location">tại <i class="fas fa-map-marker-alt"></i> ${post.location}</span>`;
+                }
+                
+                // Định dạng thời gian
+                const postDate = new Date(post.created_at);
+                const formattedDate = postDate.toLocaleString('vi-VN');
+                
+                // Tạo HTML cho bài viết
+                postElement.innerHTML = `
+                    <div class="card-header post-header">
+                        <div class="post-author">
+                            <div class="avatar">
+                                <img src="${post.author.avatar}" alt="Avatar">
+                            </div>
+                            <div class="author-info">
+                                <h4>${post.author.name}</h4>
+                                <p>${formattedDate} ${post.privacy !== 'public' ? `<i class="fas fa-${post.privacy === 'private' ? 'lock' : 'user-friends'}"></i>` : ''}</p>
+                            </div>
+                        </div>
+                        <div class="post-options">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                    <div class="card-body post-content">
+                        <p>${post.content || ''} ${emotionHTML} ${locationHTML}</p>
+                        ${mediaHTML}
+                    </div>
+                    <div class="card-footer post-footer">
+                        <div class="post-stats">
+                            <div class="likes">
+                                <i class="fas fa-heart"></i>
+                                <span>${post.likes_count}</span>
+                            </div>
+                            <div class="comments">
+                                <i class="fas fa-comment"></i>
+                                <span>${post.comments_count}</span>
+                            </div>
+                            <div class="shares">
+                                <i class="fas fa-share"></i>
+                                <span>${post.shares_count}</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn ${post.is_liked ? 'liked' : ''}">
+                                <i class="${post.is_liked ? 'fas' : 'far'} fa-heart"></i>
+                                <span>Thích</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-comment"></i>
+                                <span>Bình luận</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-share-square"></i>
+                                <span>Chia sẻ</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Thiết lập sự kiện cho nút thích
+                const likeButton = postElement.querySelector('.action-btn:nth-child(1)');
+                setupLikeButton(likeButton, post.post_id);
+                
+                // Thiết lập sự kiện cho nút play video
+                const playButtons = postElement.querySelectorAll('.video-play-button');
+                playButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const videoContainer = this.closest('.video-container');
+                        const video = videoContainer.querySelector('video');
+                        if (video) {
+                            if (video.paused) {
+                                video.play();
+                                this.style.display = 'none';
+                            } else {
+                                video.pause();
+                                this.style.display = 'flex';
+                            }
+                        }
+                    });
+                });
+                
+                // Thiết lập sự kiện cho overlay "xem thêm"
+                const moreOverlays = postElement.querySelectorAll('.more-media-overlay');
+                moreOverlays.forEach(overlay => {
+                    overlay.addEventListener('click', function() {
+                        // Mở modal xem đầy đủ media (có thể thực hiện sau)
+                        alert('Mở chế độ xem đầy đủ hình ảnh và video');
+                    });
+                });
+                
+                // Thiết lập sự kiện cho videos
+                const videos = postElement.querySelectorAll('video');
+                videos.forEach(video => {
+                    video.addEventListener('play', function() {
+                        const playButton = this.parentElement.querySelector('.video-play-button');
+                        if (playButton) {
+                            playButton.style.display = 'none';
+                        }
+                    });
+                    
+                    video.addEventListener('pause', function() {
+                        const playButton = this.parentElement.querySelector('.video-play-button');
+                        if (playButton) {
+                            playButton.style.display = 'flex';
+                        }
+                    });
+                    
+                    video.addEventListener('ended', function() {
+                        const playButton = this.parentElement.querySelector('.video-play-button');
+                        if (playButton) {
+                            playButton.style.display = 'flex';
+                        }
+                    });
+                });
+                
+                return postElement;
+            }
+            
+            // Hàm thiết lập nút thích
+            function setupLikeButton(likeButton, postId) {
+                likeButton.addEventListener('click', function() {
                     this.classList.toggle('liked');
                     const icon = this.querySelector('i');
+                    const likeCountElement = this.closest('.post-footer').querySelector('.likes span');
+                    let likeCount = parseInt(likeCountElement.textContent);
                     
                     if (this.classList.contains('liked')) {
                         icon.classList.remove('far');
                         icon.classList.add('fas');
+                        likeCountElement.textContent = likeCount + 1;
                         
                         // Hiệu ứng heart bouncing
                         icon.classList.add('animate__animated', 'animate__heartBeat');
                         setTimeout(() => {
                             icon.classList.remove('animate__animated', 'animate__heartBeat');
                         }, 1000);
+                        
+                        // Gọi API thích bài viết nếu có apiService
+                        if (typeof apiService !== 'undefined' && apiService.posts) {
+                            apiService.posts.toggleLike(postId)
+                                .catch(error => {
+                                    console.error('Error liking post:', error);
+                                    this.classList.remove('liked');
+                                    icon.classList.remove('fas');
+                                    icon.classList.add('far');
+                                    likeCountElement.textContent = likeCount;
+                                });
+                        }
                     } else {
                         icon.classList.remove('fas');
                         icon.classList.add('far');
+                        likeCountElement.textContent = Math.max(0, likeCount - 1);
+                        
+                        // Gọi API bỏ thích bài viết nếu có apiService
+                        if (typeof apiService !== 'undefined' && apiService.posts) {
+                            apiService.posts.toggleLike(postId)
+                                .catch(error => {
+                                    console.error('Error unliking post:', error);
+                                    this.classList.add('liked');
+                                    icon.classList.remove('far');
+                                    icon.classList.add('fas');
+                                    likeCountElement.textContent = likeCount;
+                                });
+                        }
                     }
                 });
-            });
-            
-            // Hiệu ứng khi load trang
-            const postCards = document.querySelectorAll('.post-card');
-            setTimeout(() => {
-                postCards.forEach((card, index) => {
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, index * 200);
-                });
-            }, 300);
+            }
         });
     </script>
+    <style>
+        /* Styles for loading state */
+        .feed-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            width: 100%;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        
+        .empty-state i {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .empty-state p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .retry-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .retry-btn:hover {
+            background-color: var(--primary-color-dark);
+        }
+        
+        .error-message .fas {
+            color: #f44336;
+        }
+    </style>
 </body>
 </html> 

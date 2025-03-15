@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', async function() {
  * @param {Object} userData - The user data object from API
  */
 function updateProfileUI(userData) {
+    
+    
     // Update profile name and verified status
     const profileNameElement = document.querySelector('.profile-name h1');
     if (profileNameElement) {
@@ -72,12 +74,10 @@ function updateProfileUI(userData) {
         name.textContent = userData.fullName || 'Người dùng Aley';
     });
     
-    // Update bio element (no date of birth as requested)
     const bioElement = document.querySelector('.profile-bio');
     if (bioElement) {
-        // You can set a default bio or use a custom bio field from the API if available
-        bioElement.textContent = 'No bio yet.';
-    }
+        bioElement.textContent = userData['profile-bio'] || 'Chưa có thông tin giới thiệu';
+    } 
 }
 
 /**
