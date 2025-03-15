@@ -44,10 +44,22 @@ class PostLoader {
                 
                 if (response.data && response.data.posts && response.data.posts.length > 0) {
                     // Add posts from API to feed
-                    response.data.posts.forEach(post => {
-                        const postElement = this.createPostElement(post);
-                        this.feedElement.appendChild(postElement);
-                    });
+                    // Filter posts in home page (show public and friends posts, and own private posts)
+                    const visiblePosts = response.data.posts.filter(post => 
+                        post.privacy === 'public' || 
+                        post.privacy === 'friends' || 
+                        post.is_own_post === true
+                    );
+                    
+                    if (visiblePosts.length > 0) {
+                        visiblePosts.forEach(post => {
+                            const postElement = this.createPostElement(post);
+                            this.feedElement.appendChild(postElement);
+                        });
+                    } else {
+                        // Show empty state if no visible posts
+                        this.showEmptyState();
+                    }
                 } else {
                     // Show empty state
                     this.showEmptyState();
@@ -130,6 +142,16 @@ class PostLoader {
             window.hashtagFormatter.formatTextWithHashtags(post.content || '') : 
             (post.content || '');
         
+        // Create HTML for privacy label
+        let privacyLabel = '';
+        if (post.privacy === 'private') {
+            privacyLabel = '<span class="privacy-label private"><i class="fas fa-lock"></i> Riêng tư</span>';
+        } else if (post.privacy === 'friends') {
+            privacyLabel = '<span class="privacy-label friends"><i class="fas fa-user-friends"></i> Bạn bè</span>';
+        } else {
+            privacyLabel = '<span class="privacy-label public"><i class="fas fa-globe-asia"></i> Công khai</span>';
+        }
+        
         // Create HTML for post
         postElement.innerHTML = `
             <div class="card-header post-header">
@@ -139,7 +161,7 @@ class PostLoader {
                     </div>
                     <div class="author-info">
                         <h4>${post.author.name}</h4>
-                        <p>${formattedDate} ${post.privacy !== 'public' ? `<i class="fas fa-${post.privacy === 'private' ? 'lock' : 'user-friends'}"></i>` : ''}</p>
+                        <p>${formattedDate} ${privacyLabel}</p>
                     </div>
                 </div>
                 <div class="post-options">

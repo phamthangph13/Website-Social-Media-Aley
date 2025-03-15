@@ -641,4 +641,55 @@ body {
     .social-buttons {
         flex-wrap: wrap;
     }
+}
+
+/* Thêm style cho nhãn quyền riêng tư */
+.privacy-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.privacy-label i {
+    margin-right: 4px;
+    font-size: 11px;
+}
+
+.privacy-label.public {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    border: 1px solid #91d5ff;
+}
+
+.privacy-label.friends {
+    background-color: #fff7e6;
+    color: #fa8c16;
+    border: 1px solid #ffd591;
+}
+
+.privacy-label.private {
+    background-color: #fff1f0;
+    color: #f5222d;
+    border: 1px solid #ffa39e;
+}
+
+/* Dark theme adjustments for privacy labels */
+html[data-theme="dark"] .privacy-label.public {
+    background-color: rgba(24, 144, 255, 0.2);
+    border-color: rgba(24, 144, 255, 0.4);
+}
+
+html[data-theme="dark"] .privacy-label.friends {
+    background-color: rgba(250, 140, 22, 0.2);
+    border-color: rgba(250, 140, 22, 0.4);
+}
+
+html[data-theme="dark"] .privacy-label.private {
+    background-color: rgba(245, 34, 45, 0.2);
+    border-color: rgba(245, 34, 45, 0.4);
 } 

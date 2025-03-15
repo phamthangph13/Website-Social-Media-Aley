@@ -25,13 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Get selected privacy
+            const privacyText = document.querySelector('.privacy-text');
+            const selectedPrivacy = privacyText.dataset.privacy || 'public';
+            
             // Show loading overlay
             showPostLoading();
             
             // Prepare post data
             const postData = {
                 content: postContent,
-                privacy: 'public' // Default to public
+                privacy: selectedPrivacy // Use selected privacy
             };
             
             // Simulate upload progress (replace with actual API in production)
@@ -71,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     likes_count: 0,
                                     comments_count: 0,
                                     shares_count: 0,
-                                    privacy: 'public',
+                                    privacy: selectedPrivacy, // Use selected privacy
                                     is_liked: false,
                                     is_own_post: true // Mark as user's own post
                                 };
@@ -139,6 +143,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!privacyBtn || !privacyDropdown || !privacyOptions.length) return;
         
+        // Set default privacy if not already set
+        if (!privacyText.dataset.privacy) {
+            privacyText.dataset.privacy = 'public';
+        }
+        
         // Toggle privacy dropdown
         privacyBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -154,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Update button text and icon
                 privacyText.textContent = privacyName;
+                privacyText.dataset.privacy = privacy; // Save selected privacy
                 privacyIcon.className = privacyIconClass;
                 
                 // Hide dropdown

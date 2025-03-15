@@ -104,8 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         errorMessage.textContent = error.message || 'Đã xảy ra lỗi khi tải bài viết. Vui lòng thử lại sau.';
                     }
                     
-                    console.error('Failed to load user posts:', error);
-                    
                     // Hiển thị nút tải lại rõ ràng hơn
                     const retryBtn = document.querySelector('.retry-btn');
                     if (retryBtn) {
@@ -119,8 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => {
                     // Hide loading state
                     postsLoading.style.display = 'none';
-                    
-                    console.log('My posts response:', response);
                     
                     if (response.data && response.data.posts && response.data.posts.length > 0) {
                         // Display my posts directly
@@ -143,8 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (errorMessage) {
                         errorMessage.textContent = error.message || 'Đã xảy ra lỗi khi tải bài viết. Vui lòng thử lại sau.';
                     }
-                    
-                    console.error('Failed to load my posts:', error);
                     
                     // Hiển thị nút tải lại rõ ràng hơn
                     const retryBtn = document.querySelector('.retry-btn');
@@ -238,6 +232,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const postDate = new Date(post.created_at);
         const formattedDate = postDate.toLocaleString('vi-VN');
         
+        // Create HTML for privacy label
+        let privacyLabel = '';
+        if (post.privacy === 'private') {
+            privacyLabel = '<span class="privacy-label private"><i class="fas fa-lock"></i> Riêng tư</span>';
+        } else if (post.privacy === 'friends') {
+            privacyLabel = '<span class="privacy-label friends"><i class="fas fa-user-friends"></i> Bạn bè</span>';
+        } else {
+            privacyLabel = '<span class="privacy-label public"><i class="fas fa-globe-asia"></i> Công khai</span>';
+        }
+        
         // Format post content with hashtag highlighting
         const formattedContent = window.hashtagFormatter ? 
             window.hashtagFormatter.formatTextWithHashtags(post.content || '') : 
@@ -250,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <img src="${getAvatarUrl(post.author.avatar)}" alt="Author">
                     <div class="author-info">
                         <h4>${post.author.name}</h4>
-                        <span class="post-time">${formattedDate} ${post.privacy !== 'public' ? `<i class="fas fa-${post.privacy === 'private' ? 'lock' : 'user-friends'}"></i>` : ''}</span>
+                        <span class="post-time">${formattedDate} ${privacyLabel}</span>
                     </div>
                 </div>
                 <button class="post-menu">
