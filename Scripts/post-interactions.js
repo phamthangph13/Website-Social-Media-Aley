@@ -215,6 +215,7 @@ function setupFriendRequestButtons() {
             
             // Store the user ID on the button for later use
             button.dataset.userId = authorId;
+            button.dataset.userName = authorName;
             
             // Check friendship status via API if available
             if (typeof apiService !== 'undefined' && apiService.friends && apiService.friends.checkFriendshipStatus) {
@@ -226,12 +227,17 @@ function setupFriendRequestButtons() {
             e.preventDefault();
             e.stopPropagation();
             
+            // Nếu nút đã có class is-friend, sự kiện đã được xử lý bởi showFriendOptionsSheet
+            if (this.classList.contains('is-friend')) {
+                return; 
+            }
+            
             // Get the post element and post ID
             const postElement = this.closest('.post-card');
             const postId = postElement?.dataset.postId;
             
             // Get the author name and ID
-            const authorName = postElement.querySelector('.post-author .author-info h4').textContent.trim().replace(' (Bạn)', '');
+            const authorName = this.dataset.userName || postElement.querySelector('.post-author .author-info h4').textContent.trim().replace(' (Bạn)', '');
             const authorId = this.dataset.userId;
             
             // Check if user is logged in
@@ -241,9 +247,8 @@ function setupFriendRequestButtons() {
                 return;
             }
             
-            // If the button is already in "sent" state, show confirmation to cancel request
+            // If the button is already in "sent" state, cancel the request directly
             if (this.classList.contains('sent')) {
-                // Trực tiếp huỷ lời mời kết bạn mà không cần hiển thị hộp thoại xác nhận
                 try {
                     const requestId = this.dataset.requestId;
                     if (requestId && typeof apiService !== 'undefined' && apiService.friends) {
@@ -263,8 +268,39 @@ function setupFriendRequestButtons() {
                 return;
             }
             
-            // Update button appearance immediately for better UX
-            this.innerHTML = '<i class="fas fa-times"></i><span>Huỷ lời mời</span>';
+            // If the button is in "received" state, accept the request
+            if (this.classList.contains('received')) {
+                try {
+                    const requestId = this.dataset.requestId;
+                    if (requestId && typeof apiService !== 'undefined' && apiService.friends) {
+                        const response = await apiService.friends.acceptFriendRequest(requestId);
+                        
+                        // Update button to "Friends" state
+                        this.innerHTML = '<i class="fas fa-user-check"></i><span>Bạn bè</span>';
+                        this.classList.remove('received');
+                        this.classList.add('is-friend');
+                        
+                        // Store friendship ID if available
+                        if (response.success && response.data && response.data.friendship_id) {
+                            this.dataset.friendshipId = response.data.friendship_id;
+                        }
+                        
+                        // Add event listener for friend options
+                        this.removeEventListener('click', arguments.callee);
+                        this.addEventListener('click', showFriendOptionsSheet);
+                        
+                        // Show notification
+                        showToast('success', 'Đã chấp nhận lời mời kết bạn', `Bạn và ${authorName} đã trở thành bạn bè`);
+                    }
+                } catch (error) {
+                    console.error('Error accepting friend request:', error);
+                    showToast('error', 'Lỗi', 'Không thể chấp nhận lời mời kết bạn. Vui lòng thử lại sau.');
+                }
+                return;
+            }
+            
+            // Update button appearance immediately for better UX - default case: sending friend request
+            this.innerHTML = '<i class="fas fa-user-clock"></i><span>Đã gửi</span>';
             this.classList.add('sent');
             
             // Call API to send friend request
@@ -278,7 +314,7 @@ function setupFriendRequestButtons() {
                         this.dataset.requestId = response.data.request_id;
                         
                         // Show success notification
-                        showToast('success', 'Đã gửi lời mời kết bạn', `Bạn đã gửi lời mời kết bạn đến ${authorName}. Nhấn vào nút 'Huỷ lời mời' để huỷ.`);
+                        showToast('success', 'Đã gửi lời mời kết bạn', `Bạn đã gửi lời mời kết bạn đến ${authorName}`);
                     }
                 }
             } catch (error) {
@@ -289,8 +325,8 @@ function setupFriendRequestButtons() {
                     // Đây là trường hợp lỗi 409 CONFLICT - đã gửi lời mời rồi
                     console.log('Already sent friend request to this user');
                     
-                    // Giữ trạng thái "Huỷ lời mời" và hiển thị thông báo phù hợp
-                    this.innerHTML = '<i class="fas fa-times"></i><span>Huỷ lời mời</span>';
+                    // Cập nhật giao diện nút thành "Huỷ lời mời"
+                    this.innerHTML = '<i class="fas fa-user-clock"></i><span>Hủy lời mời</span>';
                     this.classList.add('sent');
                     
                     // Thử lấy request_id từ lỗi nếu có
@@ -299,7 +335,7 @@ function setupFriendRequestButtons() {
                     }
                     
                     // Hiển thị thông báo thích hợp
-                    showToast('info', 'Đã gửi trước đó', `Bạn đã gửi lời mời kết bạn đến ${authorName} trước đó. Nhấn vào nút 'Huỷ lời mời' để huỷ.`);
+                    showToast('info', 'Đã gửi trước đó', `Bạn đã gửi lời mời kết bạn đến ${authorName} trước đó`);
                     
                     // Gọi kiểm tra lại trạng thái để cố gắng lấy request_id nếu chưa có
                     if (!this.dataset.requestId) {
@@ -336,24 +372,34 @@ async function checkAndUpdateFriendshipStatus(button, userId, userName) {
         console.log(`Friendship status response for ${userName}:`, response);
         
         if (response.success && response.data) {
-            const { status, request_id } = response.data;
+            const { status, request_id, friendship_id } = response.data;
             console.log(`Friendship status for ${userName}: ${status}`);
             
             switch (status) {
                 case 'friends':
-                    // Already friends - hide button
-                    console.log(`${userName} is already a friend, hiding button`);
-                    button.style.display = 'none';
+                    // Already friends - show friends button with options
+                    console.log(`${userName} is already a friend, updating to Friends button`);
+                    button.innerHTML = '<i class="fas fa-user-check"></i><span>Bạn bè</span>';
+                    button.classList.remove('sent', 'received');
+                    button.classList.add('is-friend');
+                    if (friendship_id) {
+                        button.dataset.friendshipId = friendship_id;
+                    }
+                    button.dataset.userId = userId;
+                    button.dataset.userName = userName;
+                    
+                    // Gắn sự kiện click để hiển thị sheet tùy chọn
+                    button.addEventListener('click', showFriendOptionsSheet);
                     break;
                     
                 case 'pending_sent':
                     // Friend request already sent
                     console.log(`Friend request already sent to ${userName}, updating button`);
-                    button.innerHTML = '<i class="fas fa-times"></i><span>Huỷ lời mời</span>';
+                    button.innerHTML = '<i class="fas fa-user-clock"></i><span>Hủy lời mời</span>';
                     button.classList.add('sent');
+                    button.classList.remove('is-friend', 'received');
                     if (request_id) {
                         button.dataset.requestId = request_id;
-                        console.log(`Stored request_id on button: ${request_id}`);
                     }
                     break;
                     
@@ -362,37 +408,18 @@ async function checkAndUpdateFriendshipStatus(button, userId, userName) {
                     console.log(`Received friend request from ${userName}, updating button to Accept`);
                     button.innerHTML = '<i class="fas fa-user-check"></i><span>Chấp nhận</span>';
                     button.classList.add('received');
+                    button.classList.remove('is-friend', 'sent');
                     if (request_id) {
                         button.dataset.requestId = request_id;
-                        console.log(`Stored request_id on button: ${request_id}`);
                     }
-                    
-                    // Change click handler for accept functionality
-                    button.addEventListener('click', async function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        try {
-                            if (typeof apiService !== 'undefined' && apiService.friends) {
-                                await apiService.friends.acceptFriendRequest(request_id);
-                            }
-                            
-                            // Update button state
-                            button.style.display = 'none'; // Hide after accepting
-                            
-                            // Show notification
-                            showToast('success', 'Đã chấp nhận lời mời kết bạn', `Bạn và ${userName} đã trở thành bạn bè`);
-                        } catch (error) {
-                            console.error('Error accepting friend request:', error);
-                            showToast('error', 'Lỗi', 'Không thể chấp nhận lời mời kết bạn. Vui lòng thử lại sau.');
-                        }
-                    }, { once: true }); // Only run once
                     break;
                     
                 case 'not_friends':
                 default:
                     // Not friends - keep default button state
                     console.log(`Not friends with ${userName}, keeping default button state`);
+                    button.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
+                    button.classList.remove('is-friend', 'sent', 'received');
                     break;
             }
         } else {
@@ -400,6 +427,237 @@ async function checkAndUpdateFriendshipStatus(button, userId, userName) {
         }
     } catch (error) {
         console.error(`Error checking friendship status for ${userName}:`, error);
+    }
+}
+
+/**
+ * Hiển thị sheet tùy chọn khi click vào nút Bạn bè
+ * @param {Event} e - Sự kiện click
+ */
+function showFriendOptionsSheet(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const button = e.currentTarget;
+    const userId = button.dataset.userId;
+    const userName = button.dataset.userName;
+    const friendshipId = button.dataset.friendshipId;
+    
+    // Xóa sheet cũ nếu đã tồn tại
+    const existingSheet = document.querySelector('.friend-options-sheet');
+    if (existingSheet) {
+        existingSheet.remove();
+    }
+    
+    // Tạo sheet tùy chọn
+    const sheet = document.createElement('div');
+    sheet.className = 'friend-options-sheet animate__animated animate__fadeInUp';
+    sheet.innerHTML = `
+        <div class="sheet-header">
+            <h4>${userName}</h4>
+            <button class="close-sheet"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="sheet-options">
+            <button class="sheet-option view-profile">
+                <i class="fas fa-user"></i>
+                <span>Xem trang cá nhân</span>
+            </button>
+            <button class="sheet-option unfriend">
+                <i class="fas fa-user-minus"></i>
+                <span>Huỷ kết bạn</span>
+            </button>
+            <button class="sheet-option block-user">
+                <i class="fas fa-ban"></i>
+                <span>Chặn người dùng này</span>
+            </button>
+        </div>
+    `;
+    
+    // Thêm sheet vào body
+    document.body.appendChild(sheet);
+    
+    // Thêm backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sheet-backdrop';
+    document.body.appendChild(backdrop);
+    
+    // Xử lý đóng sheet
+    const closeBtn = sheet.querySelector('.close-sheet');
+    closeBtn.addEventListener('click', closeSheet);
+    backdrop.addEventListener('click', closeSheet);
+    
+    // Xử lý các tùy chọn
+    const viewProfileBtn = sheet.querySelector('.view-profile');
+    viewProfileBtn.addEventListener('click', () => {
+        // Chuyển đến trang cá nhân
+        window.location.href = `/profile.html?id=${userId}`;
+        closeSheet();
+    });
+    
+    const unfriendBtn = sheet.querySelector('.unfriend');
+    unfriendBtn.addEventListener('click', async () => {
+        try {
+            // Hiển thị xác nhận nếu cần
+            if (confirm(`Bạn có chắc muốn huỷ kết bạn với ${userName}?`)) {
+                // Gọi API huỷ kết bạn
+                const response = await apiService.friends.unfriendUser(userId);
+                
+                if (response.success) {
+                    // Cập nhật trạng thái nút trở lại thành "Kết bạn"
+                    button.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
+                    button.classList.remove('is-friend');
+                    
+                    // Xóa event listener cũ
+                    button.removeEventListener('click', showFriendOptionsSheet);
+                    
+                    // Gán lại event listener để gửi lời mời kết bạn
+                    button.addEventListener('click', async function(event) {
+                        event.preventDefault();
+                        
+                        // Kiểm tra đăng nhập
+                        if (!localStorage.getItem('aley_token')) {
+                            showLoginPrompt('Bạn cần đăng nhập để gửi lời mời kết bạn');
+                            return;
+                        }
+                        
+                        // Cập nhật giao diện nút ngay lập tức
+                        this.innerHTML = '<i class="fas fa-user-clock"></i><span>Đã gửi</span>';
+                        this.classList.add('sent');
+                        
+                        try {
+                            // Gửi lời mời kết bạn
+                            const sendResponse = await apiService.friends.sendFriendRequest(userId);
+                            if (sendResponse.success && sendResponse.data) {
+                                this.dataset.requestId = sendResponse.data.request_id;
+                                showToast('success', 'Đã gửi lời mời kết bạn', `Đã gửi lời mời kết bạn đến ${userName}`);
+                            }
+                        } catch (sendError) {
+                            console.error('Error sending friend request:', sendError);
+                            // Khôi phục trạng thái nút nếu gặp lỗi
+                            this.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
+                            this.classList.remove('sent');
+                            showToast('error', 'Lỗi', 'Không thể gửi lời mời kết bạn. Vui lòng thử lại sau.');
+                        }
+                    });
+                    
+                    showToast('success', 'Đã huỷ kết bạn', `Bạn đã huỷ kết bạn với ${userName}`);
+                } else {
+                    showToast('error', 'Lỗi', response.error?.message || 'Không thể huỷ kết bạn. Vui lòng thử lại sau.');
+                }
+            }
+        } catch (error) {
+            console.error('Error unfriending user:', error);
+            showToast('error', 'Lỗi', 'Không thể huỷ kết bạn. Vui lòng thử lại sau.');
+        }
+        closeSheet();
+    });
+    
+    const blockUserBtn = sheet.querySelector('.block-user');
+    blockUserBtn.addEventListener('click', () => {
+        // Chức năng chặn người dùng (có thể phát triển sau)
+        showToast('info', 'Chức năng đang phát triển', 'Tính năng chặn người dùng đang được phát triển');
+        closeSheet();
+    });
+    
+    function closeSheet() {
+        sheet.classList.remove('animate__fadeInUp');
+        sheet.classList.add('animate__fadeOutDown');
+        backdrop.classList.add('animate__fadeOut');
+        
+        setTimeout(() => {
+            sheet.remove();
+            backdrop.remove();
+        }, 300);
+    }
+    
+    // Thêm CSS vào document nếu chưa có
+    if (!document.getElementById('friend-options-sheet-styles')) {
+        const style = document.createElement('style');
+        style.id = 'friend-options-sheet-styles';
+        style.textContent = `
+            .sheet-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 9998;
+            }
+            
+            .friend-options-sheet {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: white;
+                border-radius: 12px 12px 0 0;
+                padding: 16px;
+                z-index: 9999;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sheet-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 12px;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 12px;
+            }
+            
+            .sheet-header h4 {
+                margin: 0;
+                font-size: 18px;
+            }
+            
+            .close-sheet {
+                background: none;
+                border: none;
+                font-size: 18px;
+                color: #777;
+                cursor: pointer;
+            }
+            
+            .sheet-options {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .sheet-option {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                background: none;
+                border: none;
+                padding: 12px;
+                text-align: left;
+                font-size: 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            
+            .sheet-option:hover {
+                background-color: #f5f5f5;
+            }
+            
+            .sheet-option i {
+                font-size: 18px;
+                width: 24px;
+                text-align: center;
+            }
+            
+            .unfriend {
+                color: #e74c3c;
+            }
+            
+            .block-user {
+                color: #e74c3c;
+            }
+        `;
+        document.head.appendChild(style);
     }
 }
 
