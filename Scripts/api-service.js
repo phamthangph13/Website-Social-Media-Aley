@@ -112,7 +112,10 @@ const AleyAPI = {
         
         // Login user
         login: async function(email, password) {
-            const response = await fetch(`${AleyAPI.baseUrl}/auth/login`, {
+            const fullUrl = `${AleyAPI.baseUrl}/auth/login`;
+            console.log('Login URL:', fullUrl);
+            
+            const response = await fetch(fullUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
