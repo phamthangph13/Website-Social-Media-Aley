@@ -31,7 +31,7 @@ async function fetchCurrentUser() {
         }
         
         // Make API request to get current user
-        const response = await fetch('/api/users/me', {
+        const response = await fetch('https://website-social-media-aley-back-end.onrender.com/users/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
