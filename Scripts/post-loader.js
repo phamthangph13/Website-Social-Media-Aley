@@ -578,7 +578,7 @@ class PostLoader {
             return avatar;
         } else {
             // Nếu không phải URL, giả định đây là image_id và tạo URL đến API
-            return `${apiService.baseUrl || 'http://localhost:5000/api'}/users/image/${avatar}`;
+            return `${apiService.baseUrl || 'https://website-social-media-aley-back-end.onrender.com'}/users/image/${avatar}`;
         }
     }
 }
