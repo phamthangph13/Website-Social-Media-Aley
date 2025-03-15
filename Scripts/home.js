@@ -14,6 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load posts from API
     postLoader.loadPosts();
     
+    // Make sure friend request buttons are set up
+    setTimeout(() => {
+        if (typeof setupFriendRequestButtons === 'function') {
+            console.log('Setting up friend request buttons from home.js');
+            setupFriendRequestButtons();
+        }
+    }, 1000); // Give posts time to load
+    
     // Set up event for post button in the post creator
     const postBtn = document.querySelector('.post-btn');
     if (postBtn) {

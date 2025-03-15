@@ -186,4 +186,101 @@ class PostInteractions {
 const postInteractions = new PostInteractions();
 
 // Export for use in other modules
-window.postInteractions = postInteractions; 
+window.postInteractions = postInteractions;
+
+// Handle friend request functionality
+function setupFriendRequestButtons() {
+    console.log("Setting up friend request buttons...");
+    
+    // Find all add friend buttons in the document
+    const addFriendButtons = document.querySelectorAll('.add-friend-btn');
+    console.log(`Found ${addFriendButtons.length} add friend buttons`);
+    
+    // Add click event to each button
+    addFriendButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Get the post element and post ID
+            const postElement = this.closest('.post-card');
+            const postId = postElement?.dataset.postId;
+            
+            // Get the author name
+            const authorName = postElement.querySelector('.post-author .author-info h4').textContent;
+            console.log(`Sending friend request to ${authorName}`);
+            
+            // Update button appearance immediately for better UX
+            this.innerHTML = '<i class="fas fa-check"></i><span>Đã gửi</span>';
+            this.classList.add('sent');
+            this.disabled = true;
+            
+            // In a real app, you would call the API to send a friend request
+            // For demo purposes, we'll just simulate the API call
+            setTimeout(() => {
+                // Show a confirmation toast or notification
+                const toast = document.createElement('div');
+                toast.className = 'toast toast-success animate__animated animate__fadeInUp';
+                toast.innerHTML = `
+                    <div class="toast-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="toast-content">
+                        <h4>Đã gửi lời mời kết bạn</h4>
+                        <p>Bạn đã gửi lời mời kết bạn đến ${authorName}</p>
+                    </div>
+                    <button class="toast-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                // Add toast to the document
+                document.body.appendChild(toast);
+                
+                // Handle toast close button
+                const closeBtn = toast.querySelector('.toast-close');
+                closeBtn.addEventListener('click', () => {
+                    toast.classList.add('animate__fadeOutDown');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300);
+                });
+                
+                // Auto-remove toast after 5 seconds
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        toast.classList.add('animate__fadeOutDown');
+                        setTimeout(() => {
+                            if (document.body.contains(toast)) {
+                                toast.remove();
+                            }
+                        }, 300);
+                    }
+                }, 5000);
+            }, 500); // Simulate network delay
+        });
+    });
+}
+
+// Export the function to make it globally available
+window.setupFriendRequestButtons = setupFriendRequestButtons;
+
+// Initialize the add friend buttons when a post is created
+document.addEventListener('DOMContentLoaded', function() {
+    // Initial setup for existing posts
+    setupFriendRequestButtons();
+    
+    // Set up observer to handle buttons in new posts
+    const feedElement = document.querySelector('.feed');
+    if (feedElement) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    setTimeout(setupFriendRequestButtons, 100);
+                }
+            });
+        });
+        
+        observer.observe(feedElement, { childList: true, subtree: true });
+    }
+}); 
