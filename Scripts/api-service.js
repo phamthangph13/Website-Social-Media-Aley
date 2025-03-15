@@ -56,7 +56,7 @@ const AleyAPI = {
                 
                 // Redirect to login page after a short delay
                 setTimeout(() => {
-                    window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/index.html';
+                    window.location.href = '../index.html';
                 }, 1500);
             }
             
@@ -203,7 +203,7 @@ const AleyAPI = {
         logout: function() {
             localStorage.removeItem('aley_token');
             // Redirect to login page
-            window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/index.html';
+            window.location.href = '../index.html';
         },
         
         // Verify email
@@ -358,7 +358,7 @@ const postService = {
             
             // Redirect to login page after a short delay
             setTimeout(() => {
-                window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/index.html';
+                window.location.href = '../index.html';
             }, 1500);
             
             return Promise.reject({ message: 'Session expired' });
@@ -454,7 +454,7 @@ const postService = {
                             
                             // Redirect to login page after a short delay
                             setTimeout(() => {
-                                window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/index.html';
+                                window.location.href = '../index.html';
                             }, 1500);
                         }
                         

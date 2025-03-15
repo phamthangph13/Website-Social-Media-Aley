@@ -6,8 +6,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Check if this is a page that requires authentication (all pages in the /Page directory)
     const currentPath = window.location.pathname;
-    const isPageDirectory = currentPath.includes('https://phamthangph13.github.io/Website-Social-Media-Aley/Page/') || 
-                           currentPath.endsWith('https://phamthangph13.github.io/Website-Social-Media-Aley/Page/') ||
+    const isPageDirectory = currentPath.includes('/Page/') || 
+                           currentPath.endsWith('/Page/') ||
                            // Handle specific page filenames directly
                            [
                                '/home.html', 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redirect after a short delay
             setTimeout(() => {
-                window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/';  // Redirect to the main login page
+                window.location.href = '../index.html';  // Redirect to the main login page
             }, 1500);
         }
     }

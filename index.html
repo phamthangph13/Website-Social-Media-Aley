@@ -298,7 +298,7 @@
             
             // Kiểm tra nếu đã đăng nhập, chuyển hướng đến trang chính
             if (AleyAPI.Auth.isLoggedIn()) {
-                window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/Page/home.html';
+                window.location.href = './Page/home.html';
             }
             
             // Xử lý đăng nhập
@@ -314,7 +314,7 @@
                     
                     // Chuyển hướng đến trang chính sau khi đăng nhập thành công
                     setTimeout(() => {
-                        window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/Page/home.html';
+                        window.location.href = './Page/home.html';
                     }, 1000);
                 } catch (error) {
                     showNotification(error.message, false);

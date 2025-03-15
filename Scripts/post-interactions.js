@@ -780,7 +780,7 @@ function showLoginPrompt(message) {
     backdrop.addEventListener('click', closeModal);
     
     loginBtn.addEventListener('click', () => {
-        window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/index.html?redirect=' + encodeURIComponent(window.location.href);
+        window.location.href = '../index.html?redirect=' + encodeURIComponent(window.location.href);
     });
     
     function closeModal() {
