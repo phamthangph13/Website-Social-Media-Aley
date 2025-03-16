@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if this is a page that requires authentication (all pages in the /Page directory)
     const currentPath = window.location.pathname;
     const isPageDirectory = currentPath.includes('/Page/') || 
-                           currentPath.endsWith('/Page/') ||
+                           currentPath.endsWith('/Page') ||
                            // Handle specific page filenames directly
                            [
                                '/home.html', 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redirect after a short delay
             setTimeout(() => {
-                window.location.href = '../index.html';  // Redirect to the main login page
+                window.location.href = '/';  // Redirect to the main login page
             }, 1500);
         }
     }

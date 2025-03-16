@@ -35,8 +35,8 @@
  */
 
 const AleyAPI = {
-    // Base URL for API calls - force HTTPS
-    baseUrl: 'https://website-social-media-aley-back-end.onrender.com',
+    // Base URL for API calls
+    baseUrl: 'http://localhost:5000/api',
     
     // Utility methods
     _handleResponse: async function(response) {
@@ -56,7 +56,7 @@ const AleyAPI = {
                 
                 // Redirect to login page after a short delay
                 setTimeout(() => {
-                    window.location.href = 'https://phamthangph13.github.io/Website-Social-Media-Aley/';
+                    window.location.href = '/index.html';
                 }, 1500);
             }
             
@@ -90,24 +90,6 @@ const AleyAPI = {
         return token ? { 'Authorization': `Bearer ${token}` } : {};
     },
     
-    // Helper to ensure secure URLs and handle API path issues
-    _getSecureUrl: function(path, includeApiPrefix = false) {
-        // Start with the baseUrl, ensure it's HTTPS
-        let secureBaseUrl = this.baseUrl;
-        if (secureBaseUrl.startsWith('http://')) {
-            secureBaseUrl = secureBaseUrl.replace('http://', 'https://');
-            console.warn('Forced HTTPS in baseUrl');
-        }
-        
-        // Add /api/ prefix if requested
-        const apiPrefix = includeApiPrefix ? '/api' : '';
-        
-        // Ensure path starts with / but doesn't duplicate if baseUrl ends with /
-        const cleanPath = path.startsWith('/') ? path : `/${path}`;
-        
-        return `${secureBaseUrl}${apiPrefix}${cleanPath}`;
-    },
-    
     // Authentication methods
     Auth: {
         // Check if user is logged in
@@ -117,60 +99,42 @@ const AleyAPI = {
         
         // Register a new user
         register: async function(userData) {
-            try {
-                // Use the API prefix directly since that's the working endpoint
-                const registerUrl = AleyAPI._getSecureUrl('/auth/register', true);
-                console.log('Attempting registration with URL:', registerUrl);
-                
-                const response = await fetch(registerUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                });
-                
-                return AleyAPI._handleResponse(response);
-            } catch (error) {
-                console.error('Registration failed:', error);
-                throw error;
-            }
+            const response = await fetch(`${AleyAPI.baseUrl}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            
+            return AleyAPI._handleResponse(response);
         },
         
         // Login user
         login: async function(email, password) {
-            try {
-                // Use the API prefix directly since that's the working endpoint
-                const loginUrl = AleyAPI._getSecureUrl('/auth/login', true);
-                console.log('Attempting login with URL:', loginUrl);
-                
-                const response = await fetch(loginUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await AleyAPI._handleResponse(response);
-                
-                // Save token to localStorage
-                if (data.token) {
-                    localStorage.setItem('aley_token', data.token);
-                }
-                
-                return data;
-            } catch (error) {
-                console.error('Login failed:', error);
-                throw error;
+            const response = await fetch(`${AleyAPI.baseUrl}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const data = await AleyAPI._handleResponse(response);
+            
+            // Save token to localStorage
+            if (data.token) {
+                localStorage.setItem('aley_token', data.token);
             }
+            
+            return data;
         },
         
         // Logout user
         logout: function() {
             localStorage.removeItem('aley_token');
             // Redirect to login page
-            window.location.href = '../index.html';
+            window.location.href = '/';
         },
         
         // Verify email
@@ -288,7 +252,7 @@ const AleyAPI = {
  */
 const postService = {
     // Sử dụng baseUrl từ AleyAPI nếu tồn tại, ngược lại sử dụng mặc định
-    baseUrl: (typeof AleyAPI !== 'undefined') ? AleyAPI.baseUrl : 'https://website-social-media-aley-back-end.onrender.com',
+    baseUrl: (typeof AleyAPI !== 'undefined') ? AleyAPI.baseUrl : 'http://localhost:5000/api',
     
     /**
      * Utility function to handle API response and check for token expiration
@@ -325,7 +289,7 @@ const postService = {
             
             // Redirect to login page after a short delay
             setTimeout(() => {
-                window.location.href = '../index.html';
+                window.location.href = '/index.html';
             }, 1500);
             
             return Promise.reject({ message: 'Session expired' });
@@ -421,7 +385,7 @@ const postService = {
                             
                             // Redirect to login page after a short delay
                             setTimeout(() => {
-                                window.location.href = '../index.html';
+                                window.location.href = '/index.html';
                             }, 1500);
                         }
                         
@@ -627,7 +591,7 @@ const postService = {
  */
 const friendService = {
     // Sử dụng baseUrl từ AleyAPI
-    baseUrl: (typeof AleyAPI !== 'undefined') ? AleyAPI.baseUrl : 'https://website-social-media-aley-back-end.onrender.com',
+    baseUrl: (typeof AleyAPI !== 'undefined') ? AleyAPI.baseUrl : 'http://localhost:5000/api',
     
     /**
      * Lấy danh sách gợi ý kết bạn (những người chưa kết bạn)

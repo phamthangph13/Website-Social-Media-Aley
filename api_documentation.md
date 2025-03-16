@@ -5,7 +5,7 @@ This document provides a comprehensive guide to the Aley Social Media API endpoi
 
 ## Base URL
 ```
-https://localhost:5000
+http://localhost:5000
 ```
 
 ## Authentication
