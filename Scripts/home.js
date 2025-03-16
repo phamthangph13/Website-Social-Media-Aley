@@ -225,4 +225,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    /**
+     * Hàm để lấy bài viết công khai và của bạn bè
+     * @param {number} page - Số trang, mặc định là 1
+     * @param {number} limit - Số lượng bài viết mỗi trang, mặc định là 10
+     * @param {string} sort - Kiểu sắp xếp, mặc định là 'newest'
+     * @returns {Promise<Object>} - Promise chứa dữ liệu bài viết hoặc null nếu lỗi
+     */
+    async function getPublicAndFriendsPosts(page = 1, limit = 10, sort = 'newest') {
+        try {
+            const token = localStorage.getItem('aley_token');
+            if (!token) {
+                console.error("Không có token đăng nhập");
+                return null;
+            }
+            
+            const response = await apiService.posts.getPublicAndFriendsPosts(page, limit, sort);
+            
+            if (response.success) {
+                console.log("Đã lấy bài viết thành công:", response.data.posts);
+                
+                // Bài viết đã được chuyển đổi sang định dạng cần thiết trong API Service
+                return response.data;
+            } else {
+                console.error("Lỗi khi lấy bài viết:", response.message);
+                return null;
+            }
+        } catch (error) {
+            console.error("Lỗi kết nối:", error);
+            return null;
+        }
+    }
 }); 

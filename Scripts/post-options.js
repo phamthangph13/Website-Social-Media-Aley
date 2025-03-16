@@ -333,26 +333,71 @@ function handlePostOptionAction(action, postId, postElement) {
         case 'delete':
             // Xác nhận trước khi xóa bài viết
             if (confirm('Bạn có chắc muốn xóa bài viết này?')) {
-                // Thực hiện xóa bài viết (trong ứng dụng thực tế sẽ gọi API)
-                
                 // Hiệu ứng xóa trước khi xóa khỏi DOM
-                postElement.style.opacity = '0';
-                postElement.style.transform = 'scale(0.9)';
+                postElement.style.opacity = '0.5';
+                postElement.style.transform = 'scale(0.98)';
                 
-                setTimeout(() => {
-                    postElement.style.height = postElement.offsetHeight + 'px';
-                    postElement.style.overflow = 'hidden';
-                    
+                // Thêm lớp loading để hiển thị trạng thái đang xóa
+                postElement.classList.add('deleting');
+                
+                // Gọi API để xóa bài viết
+                if (typeof apiService !== 'undefined' && apiService.posts && apiService.posts.deletePost) {
+                    apiService.posts.deletePost(postId)
+                        .then(response => {
+                            if (response && response.success) {
+                                // Hiệu ứng xóa sau khi API thành công
+                                showToast('Bài viết đã được xóa thành công', 'success');
+                                
+                                setTimeout(() => {
+                                    postElement.style.height = postElement.offsetHeight + 'px';
+                                    postElement.style.overflow = 'hidden';
+                                    
+                                    setTimeout(() => {
+                                        postElement.style.height = '0';
+                                        postElement.style.margin = '0';
+                                        postElement.style.padding = '0';
+                                        
+                                        setTimeout(() => {
+                                            postElement.remove();
+                                        }, 300);
+                                    }, 200);
+                                }, 200);
+                            } else {
+                                // Khôi phục hiệu ứng nếu xóa không thành công
+                                postElement.style.opacity = '1';
+                                postElement.style.transform = 'scale(1)';
+                                postElement.classList.remove('deleting');
+                                
+                                showToast(response.message || 'Không thể xóa bài viết', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            // Khôi phục hiệu ứng nếu có lỗi
+                            postElement.style.opacity = '1';
+                            postElement.style.transform = 'scale(1)';
+                            postElement.classList.remove('deleting');
+                            
+                            console.error('Lỗi khi xóa bài viết:', error);
+                            showToast('Đã xảy ra lỗi khi xóa bài viết', 'error');
+                        });
+                } else {
+                    // Nếu không có API, xóa trực tiếp từ DOM (cho phiên bản demo)
                     setTimeout(() => {
-                        postElement.style.height = '0';
-                        postElement.style.margin = '0';
-                        postElement.style.padding = '0';
+                        postElement.style.height = postElement.offsetHeight + 'px';
+                        postElement.style.overflow = 'hidden';
                         
                         setTimeout(() => {
-                            postElement.remove();
-                        }, 300);
+                            postElement.style.height = '0';
+                            postElement.style.margin = '0';
+                            postElement.style.padding = '0';
+                            
+                            setTimeout(() => {
+                                postElement.remove();
+                                showToast('Bài viết đã được xóa (chế độ demo)', 'success');
+                            }, 300);
+                        }, 200);
                     }, 200);
-                }, 200);
+                }
             }
             break;
             

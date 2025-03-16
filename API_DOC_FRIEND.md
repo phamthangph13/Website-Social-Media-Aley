@@ -1,160 +1,66 @@
-# API Documentation: Friend Management System
+# Friend API Documentation
 
-## Table of Contents
-1. [Get Friend Suggestions (Non-Friends)](#1-get-friend-suggestions)
-2. [Send Friend Request](#2-send-friend-request)
-3. [Cancel Friend Request](#3-cancel-friend-request)
-4. [Unfriend User](#4-unfriend-user)
-5. [Accept Friend Request](#5-accept-friend-request)
-6. [Get Received Friend Requests](#6-get-received-friend-requests)
-7. [Get Sent Friend Requests](#7-get-sent-friend-requests)
+This document describes the API endpoints related to friend functionality.
 
----
+## Authentication
 
-## 1. Get Friend Suggestions
-
-Endpoint to retrieve users who are not connected with the current user.
-
-### Request
+All endpoints require authentication using a JWT token passed in the Authorization header:
 
 ```
-GET /api/friends/suggestions
+Authorization: Bearer <token>
 ```
 
-**Headers:**
-- `Authorization`: Bearer {token}
+## API Endpoints
 
-**Query Parameters:**
-- `page` (optional): Page number for pagination. Default: 1
-- `limit` (optional): Number of results per page. Default: 20
-- `search` (optional): Search term to filter suggestions by name
+### 1. Send Friend Request
 
-### Response
+Sends a friend request to another user.
 
-**Success (200 OK)**
+**Endpoint:** `POST /api/friends/requests`
+
+**Request Body:**
+```json
+{
+  "recipient_id": "string" // ID of the user to send request to
+}
+```
+
+**Success Response (201 Created):**
 ```json
 {
   "success": true,
   "data": {
-    "suggestions": [
-      {
-        "user_id": "123456789",
-        "name": "Trần Văn A",
-        "avatar": "https://example.com/avatar.jpg",
-        "mutual_friends_count": 5,
-        "bio": "Xin chào, tôi là Trần Văn A"
-      },
-      {
-        "user_id": "987654321",
-        "name": "Nguyễn Thị B",
-        "avatar": "https://example.com/avatar2.jpg",
-        "mutual_friends_count": 2,
-        "bio": "Chào mọi người"
-      }
-    ],
-    "pagination": {
-      "current_page": 1,
-      "total_pages": 5,
-      "total_items": 98,
-      "limit": 20
-    }
-  }
-}
-```
-
-**Error (401 Unauthorized)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Bạn cần đăng nhập để sử dụng tính năng này"
-  }
-}
-```
-
----
-
-## 2. Send Friend Request
-
-Endpoint to send a friend request to another user.
-
-### Request
-
-```
-POST /api/friends/requests
-```
-
-**Headers:**
-- `Authorization`: Bearer {token}
-- `Content-Type`: application/json
-
-**Body:**
-```json
-{
-  "recipient_id": "987654321"
-}
-```
-
-### Response
-
-**Success (201 Created)**
-```json
-{
-  "success": true,
-  "data": {
-    "request_id": "req_12345",
+    "request_id": "string",
     "recipient": {
-      "user_id": "987654321",
-      "name": "Nguyễn Thị B",
-      "avatar": "https://example.com/avatar2.jpg"
+      "user_id": "string",
+      "name": "string",
+      "avatar": "string",
+      "bio": "string" // optional
     },
     "status": "pending",
-    "created_at": "2023-08-10T15:30:45Z"
+    "created_at": "datetime"
   }
 }
 ```
 
-**Error (400 Bad Request)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "INVALID_REQUEST",
-    "message": "Không thể gửi lời mời kết bạn"
-  }
-}
-```
+**Error Responses:**
+- `400 Bad Request`: Missing recipient_id, invalid recipient_id
+- `409 Conflict`: Already friends or request already sent
+- `401 Unauthorized`: Invalid or missing token
 
-**Error (409 Conflict)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "REQUEST_ALREADY_SENT",
-    "message": "Bạn đã gửi lời mời kết bạn cho người này rồi"
-  }
-}
-```
+**Notes:**
+- If the recipient already sent you a request, this call will automatically accept it and return a 200 response with friendship details instead.
 
----
+### 2. Cancel Friend Request
 
-## 3. Cancel Friend Request
+Cancels a pending friend request that you have sent.
 
-Endpoint to cancel a previously sent friend request.
+**Endpoint:** `DELETE /api/friends/requests/:request_id`
 
-### Request
+**URL Parameters:**
+- `request_id`: ID of the friend request to cancel
 
-```
-DELETE /api/friends/requests/{request_id}
-```
-
-**Headers:**
-- `Authorization`: Bearer {token}
-
-### Response
-
-**Success (200 OK)**
+**Success Response (200 OK):**
 ```json
 {
   "success": true,
@@ -164,46 +70,52 @@ DELETE /api/friends/requests/{request_id}
 }
 ```
 
-**Error (404 Not Found)**
+**Error Responses:**
+- `404 Not Found`: Friend request not found
+- `403 Forbidden`: Not authorized to cancel this request (not the sender)
+- `401 Unauthorized`: Invalid or missing token
+
+### 3. Accept Friend Request
+
+Accepts a pending friend request that you have received.
+
+**Endpoint:** `POST /api/friends/requests/:request_id/accept`
+
+**URL Parameters:**
+- `request_id`: ID of the friend request to accept
+
+**Success Response (200 OK):**
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "REQUEST_NOT_FOUND",
-    "message": "Không tìm thấy lời mời kết bạn"
+  "success": true,
+  "data": {
+    "friendship_id": "string",
+    "friend": {
+      "user_id": "string",
+      "name": "string",
+      "avatar": "string",
+      "bio": "string" // optional
+    },
+    "created_at": "datetime"
   }
 }
 ```
 
-**Error (403 Forbidden)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED_ACTION",
-    "message": "Bạn không có quyền huỷ lời mời kết bạn này"
-  }
-}
-```
+**Error Responses:**
+- `404 Not Found`: Friend request not found
+- `403 Forbidden`: Not authorized to accept this request (not the recipient)
+- `401 Unauthorized`: Invalid or missing token
 
----
+### 4. Unfriend User
 
-## 4. Unfriend User
+Removes a user from your friends list.
 
-Endpoint to remove a user from friend list.
+**Endpoint:** `DELETE /api/friends/:friend_id`
 
-### Request
+**URL Parameters:**
+- `friend_id`: ID of the user to unfriend
 
-```
-DELETE /api/friends/{friend_id}
-```
-
-**Headers:**
-- `Authorization`: Bearer {token}
-
-### Response
-
-**Success (200 OK)**
+**Success Response (200 OK):**
 ```json
 {
   "success": true,
@@ -213,204 +125,147 @@ DELETE /api/friends/{friend_id}
 }
 ```
 
-**Error (404 Not Found)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "FRIENDSHIP_NOT_FOUND",
-    "message": "Mối quan hệ bạn bè không tồn tại"
-  }
-}
-```
+**Error Responses:**
+- `404 Not Found`: Friendship not found
+- `401 Unauthorized`: Invalid or missing token
 
----
+### 5. Check Friend Status
 
-## 5. Accept Friend Request
+Checks the friendship status between you and another user. This endpoint can be used to:
+- Check if someone is your friend
+- Check if someone sent you a friend request
+- Check if you sent someone a friend request
 
-Endpoint to accept a pending friend request.
+**Endpoint:** `GET /api/friends/status/:user_id`
 
-### Request
+**URL Parameters:**
+- `user_id`: ID of the user to check friendship status with
 
-```
-PATCH /api/friends/requests/{request_id}/accept
-```
-
-**Headers:**
-- `Authorization`: Bearer {token}
-
-### Response
-
-**Success (200 OK)**
+**Success Response (200 OK):**
 ```json
 {
   "success": true,
   "data": {
-    "friendship_id": "fr_78901",
-    "friend": {
-      "user_id": "123456789",
-      "name": "Trần Văn A",
-      "avatar": "https://example.com/avatar.jpg"
-    },
-    "created_at": "2023-08-11T09:45:22Z"
+    "status": "string", // "friends", "pending_sent", "pending_received", or "not_friends"
+    "user_id": "string",
+    "request_id": "string", // included if status is pending_sent or pending_received
+    "friendship_id": "string" // included if status is friends
   }
 }
 ```
 
-**Error (404 Not Found)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "REQUEST_NOT_FOUND",
-    "message": "Không tìm thấy lời mời kết bạn"
-  }
-}
-```
+**Status values:**
+- `friends`: The users are friends
+- `pending_sent`: Current user has sent a request to the other user
+- `pending_received`: The other user has sent a request to the current user
+- `not_friends`: No relationship exists between the users
 
-**Error (403 Forbidden)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED_ACTION",
-    "message": "Bạn không thể chấp nhận lời mời này"
-  }
-}
-```
+**Error Responses:**
+- `400 Bad Request`: Invalid user ID or trying to check status with yourself
+- `401 Unauthorized`: Invalid or missing token
 
----
+## Additional Endpoints
 
-## 6. Get Received Friend Requests
+### View Received Friend Requests
 
-Endpoint to retrieve the list of friend requests received by the current user.
-
-### Request
-
-```
-GET /api/friends/requests/received
-```
-
-**Headers:**
-- `Authorization`: Bearer {token}
+**Endpoint:** `GET /api/friends/requests/received`
 
 **Query Parameters:**
-- `page` (optional): Page number for pagination. Default: 1
-- `limit` (optional): Number of results per page. Default: 20
+- `page`: Page number (default: 1)
+- `limit`: Number of results per page (default: 20)
 
-### Response
-
-**Success (200 OK)**
+**Success Response (200 OK):**
 ```json
 {
   "success": true,
   "data": {
     "requests": [
       {
-        "request_id": "req_12345",
+        "request_id": "string",
         "sender": {
-          "user_id": "123456789",
-          "name": "Trần Văn A",
-          "avatar": "https://example.com/avatar.jpg",
-          "mutual_friends_count": 3
+          "user_id": "string",
+          "name": "string",
+          "avatar": "string",
+          "bio": "string", // optional
+          "mutual_friends_count": number // optional
         },
-        "created_at": "2023-08-10T15:30:45Z"
-      },
-      {
-        "request_id": "req_67890",
-        "sender": {
-          "user_id": "567890123",
-          "name": "Lê Thị C",
-          "avatar": "https://example.com/avatar3.jpg",
-          "mutual_friends_count": 1
-        },
-        "created_at": "2023-08-09T12:15:30Z"
+        "created_at": "datetime"
       }
     ],
     "pagination": {
-      "current_page": 1,
-      "total_pages": 1,
-      "total_items": 2,
-      "limit": 20
+      "current_page": number,
+      "total_pages": number,
+      "total_items": number,
+      "limit": number
     }
   }
 }
 ```
 
-**Error (401 Unauthorized)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Bạn cần đăng nhập để sử dụng tính năng này"
-  }
-}
-```
+### View Sent Friend Requests
 
----
-
-## 7. Get Sent Friend Requests
-
-Endpoint to retrieve the list of friend requests sent by the current user.
-
-### Request
-
-```
-GET /api/friends/requests/sent
-```
-
-**Headers:**
-- `Authorization`: Bearer {token}
+**Endpoint:** `GET /api/friends/requests/sent`
 
 **Query Parameters:**
-- `page` (optional): Page number for pagination. Default: 1
-- `limit` (optional): Number of results per page. Default: 20
+- `page`: Page number (default: 1)
+- `limit`: Number of results per page (default: 20)
 
-### Response
-
-**Success (200 OK)**
+**Success Response (200 OK):**
 ```json
 {
   "success": true,
   "data": {
     "requests": [
       {
-        "request_id": "req_54321",
+        "request_id": "string",
         "recipient": {
-          "user_id": "987654321",
-          "name": "Nguyễn Thị B",
-          "avatar": "https://example.com/avatar2.jpg"
+          "user_id": "string",
+          "name": "string",
+          "avatar": "string",
+          "bio": "string" // optional
         },
-        "created_at": "2023-08-11T10:20:15Z"
-      },
-      {
-        "request_id": "req_09876",
-        "recipient": {
-          "user_id": "345678901",
-          "name": "Phạm Văn D",
-          "avatar": "https://example.com/avatar4.jpg"
-        },
-        "created_at": "2023-08-11T09:05:22Z"
+        "created_at": "datetime"
       }
     ],
     "pagination": {
-      "current_page": 1,
-      "total_pages": 1,
-      "total_items": 2,
-      "limit": 20
+      "current_page": number,
+      "total_pages": number,
+      "total_items": number,
+      "limit": number
     }
   }
 }
 ```
 
-**Error (401 Unauthorized)**
+### Get Friend Suggestions
+
+**Endpoint:** `GET /api/friends/suggestions`
+
+**Query Parameters:**
+- `page`: Page number (default: 1)
+- `limit`: Number of results per page (default: 20)
+- `search`: Search term to filter suggestions by name (optional)
+
+**Success Response (200 OK):**
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Bạn cần đăng nhập để sử dụng tính năng này"
+  "success": true,
+  "data": {
+    "suggestions": [
+      {
+        "user_id": "string",
+        "name": "string",
+        "avatar": "string",
+        "bio": "string", // optional
+        "mutual_friends_count": number // optional
+      }
+    ],
+    "pagination": {
+      "current_page": number,
+      "total_pages": number,
+      "total_items": number,
+      "limit": number
+    }
   }
 }
 ``` 

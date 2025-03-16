@@ -42,7 +42,7 @@ class PostLoader {
         
         // Determine which API function to call
         const apiFunction = authToken ? 
-            apiService.posts.getFeed() : 
+            apiService.posts.getPublicAndFriendsPosts() : 
             apiService.posts.getPosts();
         
         // Call API and process results
@@ -367,16 +367,27 @@ class PostLoader {
         
         // Generate Add Friend button HTML
         let addFriendHTML = '';
-        if (isLoggedIn && isNotOwnPost && !isFriend) {
+        if (isLoggedIn && isNotOwnPost) {
             // Lấy user_id từ post.author
             const authorId = post.author.id || post.author.user_id || post.author._id || `user_${post.post_id}`;
             
-            addFriendHTML = `
-                <button class="add-friend-btn" data-user-id="${authorId}" title="Kết bạn với ${post.author.name}">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Kết bạn</span>
-                </button>
-            `;
+            if (!isFriend) {
+                // Nếu chưa là bạn bè, hiển thị nút "Kết bạn"
+                addFriendHTML = `
+                    <button class="add-friend-btn" data-user-id="${authorId}" title="Kết bạn với ${post.author.name}">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Kết bạn</span>
+                    </button>
+                `;
+            } else {
+                // Nếu đã là bạn bè, hiển thị trạng thái "Bạn bè" (bất kể privacy là gì)
+                addFriendHTML = `
+                    <button class="friends-btn friend-status-btn" data-user-id="${authorId}" title="Bạn bè với ${post.author.name}">
+                        <i class="fas fa-user-check"></i>
+                        <span>Bạn bè</span>
+                    </button>
+                `;
+            }
         }
         
         // Create HTML for post
@@ -457,13 +468,30 @@ class PostLoader {
         if (post.media && post.media.length > 0) {
             const mediaCount = post.media.length;
             
+            // Hỗ trợ debug
+            console.log('Generating media HTML for post:', post.post_id);
+            console.log('Media objects:', post.media);
+            
             if (mediaCount === 1) {
                 // If there's only 1 media file
                 const media = post.media[0];
+                
+                // Đảm bảo media có thuộc tính url
+                if (!media || typeof media !== 'object' || !media.url) {
+                    console.error('Invalid media object:', media);
+                    return '';
+                }
+                
+                // Kiểm tra xem URL đã đầy đủ chưa, nếu không thì thêm baseUrl
+                const mediaUrl = this.getMediaUrl(media.url);
+                const thumbnailUrl = media.thumbnail ? this.getMediaUrl(media.thumbnail) : mediaUrl;
+                
+                console.log('Media URL:', mediaUrl);
+                
                 if (media.type === 'image') {
-                    mediaHTML = `<div class="post-media"><img src="${media.url}" alt=""></div>`;
+                    mediaHTML = `<div class="post-media"><img src="${mediaUrl}" alt="" onerror="this.onerror=null; this.src='../assets/images/image-placeholder.png';"></div>`;
                 } else if (media.type === 'video') {
-                    mediaHTML = `<div class="post-media"><video src="${media.url}" controls poster="${media.thumbnail}"></video></div>`;
+                    mediaHTML = `<div class="post-media"><video src="${mediaUrl}" controls poster="${thumbnailUrl}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'media-error\\'>Không thể tải video</div>';"></video></div>`;
                 }
             } else {
                 // If there are multiple media files
@@ -473,24 +501,37 @@ class PostLoader {
                 const displayCount = Math.min(mediaCount, 6);
                 for (let i = 0; i < displayCount; i++) {
                     const media = post.media[i];
+                    
+                    // Kiểm tra media đối tượng hợp lệ
+                    if (!media || typeof media !== 'object' || !media.url) {
+                        console.error('Invalid media object at index', i, ':', media);
+                        continue;
+                    }
+                    
+                    // Lấy URL đầy đủ
+                    const mediaUrl = this.getMediaUrl(media.url);
+                    const thumbnailUrl = media.thumbnail ? this.getMediaUrl(media.thumbnail) : mediaUrl;
+                    
+                    console.log('Media', i, 'URL:', mediaUrl);
+                    
                     if (media.type === 'image') {
                         // If it's the last image and there are more not shown
                         if (i === displayCount - 1 && mediaCount > displayCount) {
                             mediaHTML += `
                                 <div class="media-item">
-                                    <img src="${media.url}" alt="">
+                                    <img src="${mediaUrl}" alt="" onerror="this.onerror=null; this.src='../assets/images/image-placeholder.png';">
                                     <div class="more-media-overlay">+${mediaCount - displayCount + 1}</div>
                                 </div>
                             `;
                         } else {
-                            mediaHTML += `<img src="${media.url}" alt="">`;
+                            mediaHTML += `<img src="${mediaUrl}" alt="" onerror="this.onerror=null; this.src='../assets/images/image-placeholder.png';">`;
                         }
                     } else if (media.type === 'video') {
                         // If it's the last video and there are more files not shown
                         if (i === displayCount - 1 && mediaCount > displayCount) {
                             mediaHTML += `
                                 <div class="video-container">
-                                    <video src="${media.url}" poster="${media.thumbnail}"></video>
+                                    <video src="${mediaUrl}" poster="${thumbnailUrl}" onerror="this.onerror=null; this.parentElement.innerHTML+='<div class=\\'media-error\\'>Không thể tải video</div>';"></video>
                                     <div class="video-play-button"><i class="fas fa-play"></i></div>
                                     <div class="more-media-overlay">+${mediaCount - displayCount + 1}</div>
                                 </div>
@@ -498,7 +539,7 @@ class PostLoader {
                         } else {
                             mediaHTML += `
                                 <div class="video-container">
-                                    <video src="${media.url}" poster="${media.thumbnail}"></video>
+                                    <video src="${mediaUrl}" poster="${thumbnailUrl}" onerror="this.onerror=null; this.parentElement.innerHTML+='<div class=\\'media-error\\'>Không thể tải video</div>';"></video>
                                     <div class="video-play-button"><i class="fas fa-play"></i></div>
                                 </div>
                             `;
@@ -580,6 +621,29 @@ class PostLoader {
             // Nếu không phải URL, giả định đây là image_id và tạo URL đến API
             return `${apiService.baseUrl || 'http://localhost:5000/api'}/users/image/${avatar}`;
         }
+    }
+    
+    // Hàm xử lý URL media từ MongoDB
+    getMediaUrl(mediaUrl) {
+        // Nếu đã là URL đầy đủ, trả về
+        if (mediaUrl && (mediaUrl.startsWith('http://') || mediaUrl.startsWith('https://') || mediaUrl.startsWith('blob:'))) {
+            return mediaUrl;
+        }
+        
+        // Nếu bắt đầu bằng /api/, chỉ cần thêm phần hostname
+        if (mediaUrl && mediaUrl.startsWith('/api/')) {
+            const hostname = location.origin; // e.g., https://example.com
+            return `${hostname}${mediaUrl}`;
+        }
+        
+        // Nếu bắt đầu bằng /, đó có thể là đường dẫn tương đối tới thư mục gốc
+        if (mediaUrl && mediaUrl.startsWith('/') && !mediaUrl.startsWith('/api/')) {
+            return mediaUrl; // Giữ nguyên vì đường dẫn này đã tương đối với thư mục gốc
+        }
+        
+        // Giả định đây là ID media và tạo URL đầy đủ
+        const baseUrl = apiService.baseUrl || 'http://localhost:5000/api';
+        return `${baseUrl}/media/${mediaUrl}`;
     }
 }
 
