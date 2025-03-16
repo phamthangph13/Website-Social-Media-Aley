@@ -118,8 +118,8 @@ const AleyAPI = {
         // Register a new user
         register: async function(userData) {
             try {
-                // Try without /api/ prefix first
-                const registerUrl = AleyAPI._getSecureUrl('/auth/register');
+                // Use the API prefix directly since that's the working endpoint
+                const registerUrl = AleyAPI._getSecureUrl('/auth/register', true);
                 console.log('Attempting registration with URL:', registerUrl);
                 
                 const response = await fetch(registerUrl, {
@@ -132,29 +132,16 @@ const AleyAPI = {
                 
                 return AleyAPI._handleResponse(response);
             } catch (error) {
-                console.error('Registration failed, trying with /api/ prefix', error);
-                
-                // Try with /api/ prefix as fallback
-                const alternateUrl = AleyAPI._getSecureUrl('/auth/register', true);
-                console.log('Alternate registration URL:', alternateUrl);
-                
-                const response = await fetch(alternateUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                });
-                
-                return AleyAPI._handleResponse(response);
+                console.error('Registration failed:', error);
+                throw error;
             }
         },
         
         // Login user
         login: async function(email, password) {
             try {
-                // Try without /api/ prefix first
-                const loginUrl = AleyAPI._getSecureUrl('/auth/login');
+                // Use the API prefix directly since that's the working endpoint
+                const loginUrl = AleyAPI._getSecureUrl('/auth/login', true);
                 console.log('Attempting login with URL:', loginUrl);
                 
                 const response = await fetch(loginUrl, {
@@ -174,28 +161,8 @@ const AleyAPI = {
                 
                 return data;
             } catch (error) {
-                console.error('Login failed, trying with /api/ prefix', error);
-                
-                // Try with /api/ prefix as fallback
-                const alternateUrl = AleyAPI._getSecureUrl('/auth/login', true);
-                console.log('Alternate login URL:', alternateUrl);
-                
-                const response = await fetch(alternateUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await AleyAPI._handleResponse(response);
-                
-                // Save token to localStorage
-                if (data.token) {
-                    localStorage.setItem('aley_token', data.token);
-                }
-                
-                return data;
+                console.error('Login failed:', error);
+                throw error;
             }
         },
         
