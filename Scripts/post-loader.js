@@ -138,7 +138,27 @@ class PostLoader {
                         
                         // Set up the friend request buttons for new posts
                         if (typeof setupFriendRequestButtons === 'function') {
-                            setupFriendRequestButtons();
+                            console.log('Setting up friend request buttons after posts load');
+                            
+                            // Reset both page flags to force a complete status check for all buttons
+                            window.pageHasBeenLoaded = false;
+                            window.pageFullyLoaded = false;
+                            
+                            setTimeout(() => {
+                                setupFriendRequestButtons();
+                                
+                                // Restore page loaded flag after a delay but not fully loaded yet
+                                setTimeout(() => {
+                                    window.pageHasBeenLoaded = true;
+                                    console.log('Page loaded flag reset after posts loaded');
+                                    
+                                    // Set fully loaded flag after all API calls should be complete
+                                    setTimeout(() => {
+                                        window.pageFullyLoaded = true;
+                                        console.log('Page fully loaded flag set after posts loaded');
+                                    }, 5000);
+                                }, 2000);
+                            }, 300); // Small delay to ensure posts are rendered
                         }
                     } else {
                         // Show empty state if no visible posts
@@ -367,28 +387,6 @@ class PostLoader {
         
         // Generate Add Friend button HTML
         let addFriendHTML = '';
-        if (isLoggedIn && isNotOwnPost) {
-            // Lấy user_id từ post.author
-            const authorId = post.author.id || post.author.user_id || post.author._id || `user_${post.post_id}`;
-            
-            if (!isFriend) {
-                // Nếu chưa là bạn bè, hiển thị nút "Kết bạn"
-                addFriendHTML = `
-                    <button class="add-friend-btn" data-user-id="${authorId}" title="Kết bạn với ${post.author.name}">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Kết bạn</span>
-                    </button>
-                `;
-            } else {
-                // Nếu đã là bạn bè, hiển thị trạng thái "Bạn bè" (bất kể privacy là gì)
-                addFriendHTML = `
-                    <button class="friends-btn friend-status-btn" data-user-id="${authorId}" title="Bạn bè với ${post.author.name}">
-                        <i class="fas fa-user-check"></i>
-                        <span>Bạn bè</span>
-                    </button>
-                `;
-            }
-        }
         
         // Create HTML for post
         postElement.innerHTML = `
@@ -404,7 +402,6 @@ class PostLoader {
                         </h4>
                         <p>${formattedDate} ${privacyLabel}</p>
                     </div>
-                    ${addFriendHTML}
                 </div>
                 <div class="post-options">
                     <i class="fas fa-ellipsis-h"></i>

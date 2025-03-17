@@ -1,6 +1,11 @@
 // Post Interactions
 // Handles likes, comments, and shares for posts
 
+// Flag to indicate if page has been loaded
+window.pageHasBeenLoaded = false;
+// Flag to indicate if page has fully loaded with all initial API calls complete
+window.pageFullyLoaded = false;
+
 class PostInteractions {
     // Set up like button functionality
     setupLikeButton(likeButton, postId) {
@@ -259,14 +264,43 @@ function setupFriendRequestButtons() {
             // In thông tin về nút để debug
             console.log(`Setting up button for: ${authorName} (${authorId})`);
             
-            // Check if we need to fetch status
+            // Force status check on each page load and reload
+            const forceCheck = document.readyState === 'complete' && !window.pageFullyLoaded;
+            
+            // Reset status tracking on forced checks
+            if (forceCheck) {
+                button.dataset.statusChecked = 'false';
+                console.log(`FORCE CHECK for ${authorName} (${authorId}) on page load/reload`);
+            }
+            
+            // Check if we need to update the status
             const needToCheckStatus = 
                 !button.dataset.statusChecked || 
                 (Date.now() - parseInt(button.dataset.lastChecked || '0')) > 30000;
             
+            // Always check friendship status when page is freshly loaded
+            const isPageLoad = !window.pageHasBeenLoaded;
+            
             // Check friendship status via API if available and needed
-            if (needToCheckStatus && typeof apiService !== 'undefined' && apiService.friends && apiService.friends.checkFriendshipStatus) {
+            if ((needToCheckStatus || isPageLoad || forceCheck) && typeof apiService !== 'undefined' && apiService.friends && apiService.friends.checkFriendshipStatus) {
+                // Extra validation to ensure API is ready
+                if (!apiService.baseUrl) {
+                    console.warn('API service baseUrl not set, defaulting to localhost');
+                    apiService.baseUrl = 'http://localhost:5000/api';
+                }
+                
+                // Ensure auth headers will be sent if user is logged in
+                if (localStorage.getItem('aley_token') && typeof apiService._getAuthHeader === 'function') {
+                    console.log('Auth token found, API calls will include authorization');
+                }
+                
                 checkCount++;
+                
+                // Use shorter delay for forced checks to prioritize them
+                const delay = forceCheck ? 50 * (checkCount % 5 + 1) : checkCount * 200;
+                
+                console.log(`Scheduling friendship check for ${authorName} (delay: ${delay}ms)`);
+                
                 // Delay checks to avoid overwhelming the API
                 setTimeout(() => {
                     checkAndUpdateFriendshipStatus(button, authorId, authorName)
@@ -275,7 +309,7 @@ function setupFriendRequestButtons() {
                             console.error(`Error checking friendship status: ${err.message}`);
                             checkComplete();
                         });
-                }, checkCount * 200); // Stagger checks
+                }, delay);
             }
         }
         
@@ -300,19 +334,11 @@ function setupFriendRequestButtons() {
         if (button.dataset.eventBound !== 'true') {
             console.log(`Binding click event to button for ${button.dataset.userName || 'unknown user'}`);
             
-            // Sử dụng clone để đảm bảo không có event listener cũ
-            const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
+            // Mark the button as having an event bound to avoid re-binding
+            button.dataset.eventBound = 'true';
             
-            // Sao chép lại các thuộc tính dataset
-            Object.keys(button.dataset).forEach(key => {
-                newButton.dataset[key] = button.dataset[key];
-            });
-            
-            // Đánh dấu nút đã được gắn sự kiện
-            newButton.dataset.eventBound = 'true';
-            
-            newButton.addEventListener('click', async function(e) {
+            // Add event listener directly to the button instead of replacing it
+            button.addEventListener('click', async function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
@@ -428,18 +454,27 @@ function setupFriendRequestButtons() {
                                 
                                 // Xóa event listener hiện tại và thêm event listener mới cho tùy chọn bạn bè
                                 const newFriendButton = this.cloneNode(true);
-                                this.parentNode.replaceChild(newFriendButton, this);
                                 
-                                // Sao chép các thuộc tính dataset
-                                Object.keys(this.dataset).forEach(key => {
-                                    newFriendButton.dataset[key] = this.dataset[key];
-                                });
-                                
-                                // Đánh dấu nút đã có tùy chọn bạn bè
-                                newFriendButton.dataset.hasFriendOptions = 'true';
-                                
-                                // Thêm event listener cho tùy chọn bạn bè
-                                newFriendButton.addEventListener('click', showFriendOptionsSheet);
+                                // Add a check to ensure this.parentNode exists
+                                if (this.parentNode) {
+                                    this.parentNode.replaceChild(newFriendButton, this);
+                                    
+                                    // Sao chép các thuộc tính dataset
+                                    Object.keys(this.dataset).forEach(key => {
+                                        newFriendButton.dataset[key] = this.dataset[key];
+                                    });
+                                    
+                                    // Đánh dấu nút đã có tùy chọn bạn bè
+                                    newFriendButton.dataset.hasFriendOptions = 'true';
+                                    
+                                    // Thêm event listener cho tùy chọn bạn bè
+                                    newFriendButton.addEventListener('click', showFriendOptionsSheet);
+                                } else {
+                                    console.warn('Button parent node is null, cannot replace button');
+                                    // Since we can't replace the button, we'll update the current one
+                                    this.dataset.hasFriendOptions = 'true';
+                                    this.addEventListener('click', showFriendOptionsSheet);
+                                }
                                 
                                 // Show notification
                                 showToast('success', 'Đã chấp nhận lời mời kết bạn', `Bạn và ${authorName} đã trở thành bạn bè`);
@@ -591,8 +626,15 @@ async function checkAndUpdateFriendshipStatus(button, userId, userName) {
     button.dataset.updating = 'true';
     
     try {
+        console.log(`Making API call to check friendship status for: ${userName} (${userId})`);
         const response = await apiService.friends.checkFriendshipStatus(userId);
-        console.log(`Friendship status for ${userName} (${userId}):`, response);
+        console.log(`=== FRIENDSHIP STATUS API RESPONSE ===`);
+        console.log(`User: ${userName} (${userId})`);
+        console.log(`Success: ${response.success}`);
+        console.log(`Status: ${response.data?.status}`);
+        console.log(`Friendship ID: ${response.data?.friendship_id}`);
+        console.log(`Request ID: ${response.data?.request_id}`);
+        console.log(`================================`);
         
         // Đánh dấu đã kiểm tra và thời gian kiểm tra
         button.dataset.statusChecked = 'true';
@@ -605,6 +647,8 @@ async function checkAndUpdateFriendshipStatus(button, userId, userName) {
             // Cập nhật giao diện nút dựa trên trạng thái kết bạn
             switch(status) {
                 case 'friends':
+                case 'accepted': // FIXED: Handle 'accepted' status the same as 'friends'
+                    console.log(`Setting to FRIEND status for ${userName}`);
                     // Nếu là bạn bè
                     button.innerHTML = '<i class="fas fa-user-check"></i><span>Bạn bè</span>';
                     button.classList.remove('sent', 'received');
@@ -613,17 +657,15 @@ async function checkAndUpdateFriendshipStatus(button, userId, userName) {
                     // Lưu friendship_id nếu có
                     if (response.data.friendship_id) {
                         button.dataset.friendshipId = response.data.friendship_id;
+                        console.log(`Stored friendship ID: ${response.data.friendship_id}`);
                     }
                     
                     // Thêm sự kiện khi nhấp để hiển thị tùy chọn bạn bè (nếu chưa có)
                     if (button.dataset.hasFriendOptions !== 'true') {
-                        // Xóa các sự kiện click cũ
-                        const oldClick = button.onclick;
-                        button.onclick = null;
-                        
-                        // Thêm sự kiện click mới
+                        // Don't remove existing click handlers, just add the new one if needed
                         button.addEventListener('click', showFriendOptionsSheet);
                         button.dataset.hasFriendOptions = 'true';
+                        console.log(`Added friend options handler for ${userName}`);
                     }
                     
                     // Cập nhật tất cả các nút cho cùng một người dùng
@@ -1156,7 +1198,25 @@ function initializeFriendButtons() {
 // Initialize the add friend buttons when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded - initializing friend button system');
+    
+    // Reset flags on page load to ensure checks run
+    window.pageHasBeenLoaded = false;
+    window.pageFullyLoaded = false;
+    
+    // Initialize the friend buttons system
     initializeFriendButtons();
+    
+    // Set the page loaded flag after a short delay to allow initial checks
+    setTimeout(() => {
+        window.pageHasBeenLoaded = true;
+        console.log('Page loaded flag set, initial friendship status checks in progress');
+        
+        // Set the fully loaded flag after all initial API calls should be complete
+        setTimeout(() => {
+            window.pageFullyLoaded = true;
+            console.log('Page fully loaded flag set, all friendship status checks should be complete');
+        }, 5000);
+    }, 2000);
     
     // Thêm trình nghe click toàn cục cho mục đích debug
     document.body.addEventListener('click', function(e) {
@@ -1270,111 +1330,99 @@ function updateAllFriendButtonsForUser(userId, status, requestId = null, friends
             return;
         }
         
-        // Lưu lại userName từ button hiện tại nếu có
-        const userName = btn.dataset.userName || '';
-        
-        // Tạo nút mới để thay thế nút cũ
-        const newBtn = btn.cloneNode(true);
-        
-        // Cập nhật dataset
-        newBtn.dataset.statusChecked = 'true';
-        newBtn.dataset.lastChecked = Date.now().toString();
-        newBtn.dataset.userId = userId;
-        
-        // Giữ lại userName nếu đã có
-        if (userName) {
-            newBtn.dataset.userName = userName;
-        }
+        // Update data attributes
+        btn.dataset.statusChecked = 'true';
+        btn.dataset.lastChecked = Date.now().toString();
+        btn.dataset.userId = userId;
         
         // Xóa tất cả các lớp trạng thái
-        newBtn.classList.remove('is-friend', 'sent', 'received');
+        btn.classList.remove('is-friend', 'sent', 'received');
         
-        // Xóa class friends-btn để đảm bảo tất cả các nút sẽ có cùng một kiểu
-        newBtn.classList.remove('friends-btn');
-        // Đảm bảo nút có class add-friend-btn
-        newBtn.classList.add('add-friend-btn');
+        // Make sure all buttons have add-friend-btn class
+        if (!btn.classList.contains('add-friend-btn')) {
+            btn.classList.add('add-friend-btn');
+        }
         
         // Cập nhật giao diện dựa trên trạng thái
         switch(status) {
             case 'is-friend':
-                newBtn.innerHTML = '<i class="fas fa-user-check"></i><span>Bạn bè</span>';
-                newBtn.classList.add('is-friend');
+                btn.innerHTML = '<i class="fas fa-user-check"></i><span>Bạn bè</span>';
+                btn.classList.add('is-friend');
                 
                 // Lưu friendship_id nếu có
                 if (friendshipId) {
-                    newBtn.dataset.friendshipId = friendshipId;
+                    btn.dataset.friendshipId = friendshipId;
                 }
                 
                 // Đánh dấu có tùy chọn bạn bè
-                newBtn.dataset.hasFriendOptions = 'true';
-                
-                // Thay thế nút cũ bằng nút mới
-                btn.parentNode.replaceChild(newBtn, btn);
-                
-                // Gắn sự kiện click cho tùy chọn bạn bè
-                newBtn.addEventListener('click', showFriendOptionsSheet);
+                if (btn.dataset.hasFriendOptions !== 'true') {
+                    btn.dataset.hasFriendOptions = 'true';
+                    btn.addEventListener('click', showFriendOptionsSheet);
+                }
                 break;
                 
             case 'sent':
-                newBtn.innerHTML = '<i class="fas fa-user-clock"></i><span>Đã gửi</span>';
-                newBtn.classList.add('sent');
+                btn.innerHTML = '<i class="fas fa-user-clock"></i><span>Đã gửi</span>';
+                btn.classList.add('sent');
                 
                 // Lưu request_id nếu có
                 if (requestId) {
-                    newBtn.dataset.requestId = requestId;
+                    btn.dataset.requestId = requestId;
                 }
                 
-                // Thay thế nút cũ bằng nút mới
-                btn.parentNode.replaceChild(newBtn, btn);
-                
-                // Gắn lại sự kiện click (sẽ được xử lý bởi setupFriendRequestButtons)
-                newBtn.dataset.eventBound = 'false';
+                // Make sure event is bound
+                if (btn.dataset.eventBound !== 'true') {
+                    btn.dataset.eventBound = 'true';
+                }
                 break;
                 
             case 'received':
-                newBtn.innerHTML = '<i class="fas fa-user-plus"></i><span>Chấp nhận lời mời</span>';
-                newBtn.classList.add('received');
+                btn.innerHTML = '<i class="fas fa-user-plus"></i><span>Chấp nhận lời mời</span>';
+                btn.classList.add('received');
                 
                 // Lưu request_id nếu có
                 if (requestId) {
-                    newBtn.dataset.requestId = requestId;
+                    btn.dataset.requestId = requestId;
                 }
                 
                 // Add a title attribute for more clarity on hover
-                if (userName) {
-                    newBtn.title = 'Chấp nhận lời mời kết bạn từ ' + userName;
+                if (btn.dataset.userName) {
+                    btn.title = 'Chấp nhận lời mời kết bạn từ ' + btn.dataset.userName;
                 }
                 
-                // Thay thế nút cũ bằng nút mới
-                btn.parentNode.replaceChild(newBtn, btn);
-                
-                // Gắn lại sự kiện click (sẽ được xử lý bởi setupFriendRequestButtons)
-                newBtn.dataset.eventBound = 'false';
+                // Make sure event is bound
+                if (btn.dataset.eventBound !== 'true') {
+                    btn.dataset.eventBound = 'true';
+                }
                 break;
                 
             default: // case 'default' hoặc 'not_friends'
-                newBtn.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
+                btn.innerHTML = '<i class="fas fa-user-plus"></i><span>Kết bạn</span>';
                 
                 // Xóa request_id nếu có
-                if (newBtn.dataset.requestId) {
-                    delete newBtn.dataset.requestId;
+                if (btn.dataset.requestId) {
+                    delete btn.dataset.requestId;
                 }
                 
                 // Xóa friendship_id nếu có
-                if (newBtn.dataset.friendshipId) {
-                    delete newBtn.dataset.friendshipId;
+                if (btn.dataset.friendshipId) {
+                    delete btn.dataset.friendshipId;
                 }
                 
-                // Thay thế nút cũ bằng nút mới
-                btn.parentNode.replaceChild(newBtn, btn);
+                // Remove friend options flag
+                if (btn.dataset.hasFriendOptions) {
+                    delete btn.dataset.hasFriendOptions;
+                }
                 
-                // Gắn lại sự kiện click (sẽ được xử lý bởi setupFriendRequestButtons)
-                newBtn.dataset.eventBound = 'false';
+                // Make sure event is bound
+                if (btn.dataset.eventBound !== 'true') {
+                    btn.dataset.eventBound = 'true';
+                }
                 break;
         }
     });
     
-    // Sau khi cập nhật, gọi lại setupFriendRequestButtons
+    // After update, make sure setupFriendRequestButtons is called to bind any missing events
     setTimeout(() => {
         if (typeof setupFriendRequestButtons === 'function') {
             setupFriendRequestButtons();

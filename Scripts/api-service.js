@@ -730,17 +730,64 @@ const friendService = {
                 throw new Error('User ID is required');
             }
             
-            const response = await fetch(`${this.baseUrl}/friends/status/${userId}`, {
+            // Get auth token, show warning if not available
+            const authToken = localStorage.getItem('aley_token');
+            if (!authToken) {
+                console.warn('No auth token available for friendship status check');
+            } else {
+                console.log('Auth token found, checking friendship status with authentication');
+            }
+            
+            const authHeaders = this._getAuthHeader();
+            console.log('Request headers:', authHeaders);
+            
+            const url = `${this.baseUrl}/friends/status/${userId}`;
+            console.log('Fetching friendship status from URL:', url);
+            
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    ...this._getAuthHeader()
+                    ...authHeaders
                 }
             });
             
-            return await this._handleApiResponse(response);
+            console.log('Raw API response status:', response.status);
+            
+            // Handle response including error cases
+            if (!response.ok) {
+                console.error(`API Error: ${response.status} ${response.statusText}`);
+                // Still try to parse the error response
+                try {
+                    const errorData = await response.json();
+                    console.error('Error details:', errorData);
+                    
+                    // Return a standardized error response
+                    return {
+                        success: false,
+                        error: errorData,
+                        data: {
+                            status: 'not_friends', // Default to not_friends on error
+                        }
+                    };
+                } catch (parseError) {
+                    console.error('Could not parse error response:', parseError);
+                }
+            }
+            
+            // Parse successful response
+            const result = await this._handleApiResponse(response);
+            console.log('Processed API response:', result);
+            return result;
         } catch (error) {
             console.error('Error checking friendship status:', error);
-            throw error;
+            // Return a default response on error rather than throwing
+            return {
+                success: false,
+                error: { message: error.message },
+                data: {
+                    status: 'not_friends', // Default to not_friends on error
+                }
+            };
         }
     },
     
